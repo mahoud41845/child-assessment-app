@@ -14,7 +14,7 @@ export interface ApiError {
   message: string;
 }
 
-const API_BASE_URL = "http://192.168.1.92:5000/api/v1/auth";
+const API_BASE_URL = "http://192.168.1.111:5000/api/v1/auth";
 
 export const loginApi = async (
   email: string,

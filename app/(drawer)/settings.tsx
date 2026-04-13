@@ -12,6 +12,7 @@ import {
   View,
   Platform,
 } from "react-native";
+import { DevSettings } from "react-native";
 
 export default function Settings() {
   const { t, language, changeLanguage, isRTL } = useTranslation();
@@ -20,12 +21,28 @@ export default function Settings() {
 
   const styles = getStyles(isRTL);
 
-  const handleLanguageChange = async () => {
+   const handleLanguageChange = () => {
     const newLanguage = language === "en" ? "ar" : "en";
-    await changeLanguage(newLanguage);
+
+    Alert.alert(
+      "تغيير اللغة",
+      "سيتم إعادة تشغيل التطبيق لتطبيق اللغة الجديدة",
+      [
+        {
+          text: "إلغاء",
+          style: "cancel",
+        },
+        {
+          text: "موافق",
+          onPress: async () => {
+            await changeLanguage(newLanguage);
+            DevSettings.reload();
+          },
+        },
+      ]
+    );
   };
 
-  // مكون فرعي لكل صف إعدادات (Reusable Component)
   const SettingItem = ({
     icon,
     label,
@@ -242,7 +259,7 @@ const getStyles = (isRTL: boolean) =>
       flexDirection: isRTL ? "row-reverse" : "row",
       alignItems: "center",
       justifyContent: "center",
-      backgroundColor: "#FEF2F2", // أحمر فاتح جداً
+      backgroundColor: "#FEF2F2",
       paddingVertical: 16,
       borderRadius: 16,
       borderWidth: 1,
