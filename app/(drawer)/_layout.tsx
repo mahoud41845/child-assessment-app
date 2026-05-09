@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Drawer } from "expo-router/drawer";
 import "react-native-reanimated";
 
-import { useTranslation } from "@/hooks/useTranslation";
+import { useTranslation } from "@/context/TranslationProvider";
 import { DrawerNavigationOptions } from "@react-navigation/drawer";
 
 export default function DrawerLayout() {
@@ -64,7 +64,7 @@ export default function DrawerLayout() {
         }}
       />
 
-      <Drawer.Screen
+      {/* <Drawer.Screen
         name="assessment"
         options={{
           ...headerOptions(t("assessments")),
@@ -73,9 +73,9 @@ export default function DrawerLayout() {
             <Ionicons name="clipboard-outline" size={size} color={color} />
           ),
         }}
-      />
+      /> */}
 
-      <Drawer.Screen
+      {/* <Drawer.Screen
         name="reports"
         options={{
           ...headerOptions(t("reports")),
@@ -84,7 +84,7 @@ export default function DrawerLayout() {
             <Ionicons name="bar-chart-outline" size={size} color={color} />
           ),
         }}
-      />
+      /> */}
 
       <Drawer.Screen
         name="settings"

@@ -62,9 +62,17 @@ export const translations: Translations = {
     en: "Save",
     ar: "حفظ",
   },
+  noData: {
+    en: "No Data",
+    ar: "لا توجد بيانات",
+  },
   cancel: {
     en: "Cancel",
     ar: "إلغاء",
+  },
+  ok: {
+    en: "OK",
+    ar: "موافق",
   },
   loading: {
     en: "Loading...",
@@ -95,5 +103,71 @@ export const translations: Translations = {
   confirmPassword: {
     en: "Confirm Password",
     ar: "تأكيد كلمة المرور",
+  },
+
+  // Settings
+  general: {
+    en: "General",
+    ar: "عام",
+  },
+  change_language_desc: {
+    en: "Change app language completely",
+    ar: "تغيير لغة التطبيق بالكامل",
+  },
+  notifications: {
+    en: "Notifications",
+    ar: "التنبيهات",
+  },
+  notification_desc: {
+    en: "Exam schedules and reports",
+    ar: "مواعيد الاختبارات والتقارير",
+  },
+  privacy: {
+    en: "Privacy & Data",
+    ar: "الخصوصية والبيانات",
+  },
+  improve_experience: {
+    en: "Improve Experience",
+    ar: "تحسين التجربة",
+  },
+  improve_experience_desc: {
+    en: "Share usage data anonymously",
+    ar: "مشاركة بيانات الاستخدام بشكل مجهول",
+  },
+  change_password: {
+    en: "Change Password",
+    ar: "تغيير كلمة المرور",
+  },
+  about: {
+    en: "About Platform",
+    ar: "عن المنصة",
+  },
+  help_center: {
+    en: "Help Center",
+    ar: "مركز المساعدة",
+  },
+  language_change_alert: {
+    en: "Change Language",
+    ar: "تغيير اللغة",
+  },
+  language_change_message: {
+    en: "The app will restart to apply the new language",
+    ar: "سيتم إعادة تشغيل التطبيق لتطبيق اللغة الجديدة",
+  },
+  customization_subtitle: {
+    en: "Customize the platform to suit you",
+    ar: "تخصيص تجربة المنصة بما يناسبك",
+  },
+  app_version: {
+    en: "App Version",
+    ar: "إصدار التطبيق",
+  },
+  latest: {
+    en: "Latest",
+    ar: "أحدث إصدار",
+  },
+  select_language: {
+    en: "Arabic Language",
+    ar: "English Language",
   },
 };

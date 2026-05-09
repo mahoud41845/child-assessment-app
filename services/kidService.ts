@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const BASE_URL = "http://192.168.1.111:5000/api/v1";
+const BASE_URL = "http://10.120.61.28:5000/api/v1";
 
 export interface Kid {
   _id?: string;
@@ -9,7 +9,6 @@ export interface Kid {
   gender: "male" | "female";
 }
 
-// دالة جلب الهيدرز مع التوكن
 const getAuthHeaders = async () => {
   const token = await AsyncStorage.getItem("token");
   return {
@@ -19,7 +18,6 @@ const getAuthHeaders = async () => {
 };
 
 export const kidService = {
-  // جلب الكل
   getAllKids: async () => {
     const headers = await getAuthHeaders();
     const response = await fetch(`${BASE_URL}/kids`, {
@@ -34,7 +32,6 @@ export const kidService = {
     return await response.json();
   },
 
-  // إضافة طفل
   createKid: async (kid: Kid) => {
     const headers = await getAuthHeaders();
     const response = await fetch(`${BASE_URL}/kids`, {
@@ -50,7 +47,6 @@ export const kidService = {
     return await response.json();
   },
 
-  // تعديل طفل (Patch)
   updateKid: async (id: string, kid: Partial<Kid>) => {
     const headers = await getAuthHeaders();
     const response = await fetch(`${BASE_URL}/kids/${id}`, {

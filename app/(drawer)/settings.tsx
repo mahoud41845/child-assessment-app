@@ -1,18 +1,17 @@
 import { Colors } from "@/constants/colors";
-import { useTranslation } from "@/hooks/useTranslation";
+import { useTranslation } from "@/context/TranslationProvider";
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 import {
   Alert,
+  Platform,
   ScrollView,
   StyleSheet,
   Switch,
   Text,
   TouchableOpacity,
   View,
-  Platform,
 } from "react-native";
-import { DevSettings } from "react-native";
 
 export default function Settings() {
   const { t, language, changeLanguage, isRTL } = useTranslation();
@@ -21,26 +20,21 @@ export default function Settings() {
 
   const styles = getStyles(isRTL);
 
-   const handleLanguageChange = () => {
+  const handleLanguageChange = () => {
     const newLanguage = language === "en" ? "ar" : "en";
 
-    Alert.alert(
-      "تغيير اللغة",
-      "سيتم إعادة تشغيل التطبيق لتطبيق اللغة الجديدة",
-      [
-        {
-          text: "إلغاء",
-          style: "cancel",
+    Alert.alert(t("language_change_alert"), t("language_change_message"), [
+      {
+        text: t("cancel"),
+        style: "cancel",
+      },
+      {
+        text: t("ok"),
+        onPress: async () => {
+          await changeLanguage(newLanguage);
         },
-        {
-          text: "موافق",
-          onPress: async () => {
-            await changeLanguage(newLanguage);
-            DevSettings.reload();
-          },
-        },
-      ]
-    );
+      },
+    ]);
   };
 
   const SettingItem = ({
@@ -90,26 +84,24 @@ export default function Settings() {
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>{t("settings")}</Text>
-        <Text style={styles.headerSubtitle}>تخصيص تجربة المنصة بما يناسبك</Text>
+        <Text style={styles.headerSubtitle}>{t("customization_subtitle")}</Text>
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionHeader}>{t("general") || "عام"}</Text>
+        <Text style={styles.sectionHeader}>{t("general")}</Text>
         <View style={styles.card}>
           <SettingItem
             icon="language-outline"
             label={language === "en" ? "اللغة العربية" : "English Language"}
-            description={
-              t("change_language_desc") || "تغيير لغة التطبيق بالكامل"
-            }
+            description={t("change_language_desc")}
             type="link"
             onPress={handleLanguageChange}
           />
           <View style={styles.separator} />
           <SettingItem
             icon="notifications-outline"
-            label="التنبيهات"
-            description="مواعيد الاختبارات والتقارير"
+            label={t("notifications")}
+            description={t("notification_desc")}
             value={notificationsEnabled}
             onValueChange={setNotificationsEnabled}
             type="toggle"
@@ -118,12 +110,12 @@ export default function Settings() {
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionHeader}>الخصوصية والبيانات</Text>
+        <Text style={styles.sectionHeader}>{t("privacy")}</Text>
         <View style={styles.card}>
           <SettingItem
             icon="shield-checkmark-outline"
-            label="تحسين التجربة"
-            description="مشاركة بيانات الاستخدام بشكل مجهول"
+            label={t("improve_experience")}
+            description={t("improve_experience_desc")}
             value={analyticsEnabled}
             onValueChange={setAnalyticsEnabled}
             type="toggle"
@@ -131,7 +123,7 @@ export default function Settings() {
           <View style={styles.separator} />
           <SettingItem
             icon="lock-closed-outline"
-            label="تغيير كلمة المرور"
+            label={t("change_password")}
             type="link"
             onPress={() => {}}
           />
@@ -139,18 +131,18 @@ export default function Settings() {
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionHeader}>عن المنصة</Text>
+        <Text style={styles.sectionHeader}>{t("about")}</Text>
         <View style={styles.card}>
           <SettingItem
             icon="help-circle-outline"
-            label="مركز المساعدة"
+            label={t("help_center")}
             type="link"
             onPress={() => {}}
           />
           <View style={styles.separator} />
           <SettingItem
             icon="information-circle-outline"
-            label="إصدار التطبيق"
+            label={t("app_version")}
             description="1.0.0 (Latest)"
             type="info"
           />

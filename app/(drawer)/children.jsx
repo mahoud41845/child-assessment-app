@@ -1,6 +1,7 @@
 import { Colors } from "@/constants/colors";
 import { kidService } from "@/services/kidService";
 import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -27,7 +28,7 @@ export default function ChildrenScreen() {
   const [name, setName] = useState("");
   const [age, setAge] = useState("");
   const [gender, setGender] = useState("male");
-
+const router = useRouter();
   useEffect(() => {
     fetchKids();
   }, []);
@@ -129,6 +130,17 @@ export default function ChildrenScreen() {
       </View>
 
       <View style={styles.actionContainer}>
+        <TouchableOpacity
+          onPress={() =>
+            router.push({
+              pathname: "/assessment",
+              params: { kidId: item._id },
+            })
+          }
+          style={[styles.iconCircle, { backgroundColor: "#E0F2FE" }]}
+        >
+          <Ionicons name="school-outline" size={18} color="#0284C7" />
+        </TouchableOpacity>
         <TouchableOpacity
           onPress={() => openEditModal(item)}
           style={[styles.iconCircle, { backgroundColor: Colors.primaryLight }]}

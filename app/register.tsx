@@ -1,5 +1,5 @@
 import { Colors } from "@/constants/colors";
-import { useTranslation } from "@/hooks/useTranslation";
+import { useTranslation } from "@/context/TranslationProvider";
 import { registerApi } from "@/services/auth";
 import { Ionicons } from "@expo/vector-icons";
 import { Link, useRouter } from "expo-router";
