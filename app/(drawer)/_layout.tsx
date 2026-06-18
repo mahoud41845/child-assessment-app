@@ -96,6 +96,17 @@ export default function DrawerLayout() {
           ),
         }}
       />
+
+      <Drawer.Screen
+        name="logout"
+        options={{
+          ...headerOptions(t("logout")),
+          drawerLabel: t("logout"),
+          drawerIcon: ({ size, color }: { size: number; color: string }) => (
+            <Ionicons name="log-out-outline" size={size} color={color} />
+          ),
+        }}
+      />
     </Drawer>
   );
 }

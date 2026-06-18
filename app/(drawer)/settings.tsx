@@ -1,10 +1,13 @@
 import { Colors } from "@/constants/colors";
 import { useTranslation } from "@/context/TranslationProvider";
 import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
   Alert,
   Platform,
+  Pressable,
   ScrollView,
   StyleSheet,
   Switch,
@@ -17,7 +20,19 @@ export default function Settings() {
   const { t, language, changeLanguage, isRTL } = useTranslation();
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [analyticsEnabled, setAnalyticsEnabled] = useState(false);
+  const router = useRouter();
+  const handleLogout = async () => {
+    console.log("🔥 pressed");
 
+    try {
+      await AsyncStorage.removeItem("token");
+      console.log("✅ removed");
+
+      router.replace("/login");
+    } catch (e) {
+      console.log("❌ error", e);
+    }
+  };
   const styles = getStyles(isRTL);
 
   const handleLanguageChange = () => {
@@ -149,10 +164,14 @@ export default function Settings() {
         </View>
       </View>
 
-      <TouchableOpacity style={styles.logoutButton}>
+      {/* <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
         <Ionicons name="log-out-outline" size={20} color={Colors.danger} />
         <Text style={styles.logoutText}>{t("logout")}</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
+      <Pressable style={styles.logoutButton} onPress={handleLogout}>
+        <Ionicons name="log-out-outline" size={20} color={Colors.danger} />
+        <Text style={styles.logoutText}>{t("logout")}</Text>
+      </Pressable>
 
       <View style={{ height: 50 }} />
     </ScrollView>

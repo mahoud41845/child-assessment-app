@@ -37,6 +37,7 @@ export default function RootLayout() {
             }}
           />
 
+          {/* Drawer Layout - Main App Navigation */}
           <Stack.Screen
             name="(drawer)"
             options={{

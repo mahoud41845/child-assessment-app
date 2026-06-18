@@ -37,14 +37,12 @@ export default function LoginScreen() {
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
 
-    // Email validation
     if (!email.trim()) {
       newErrors.email = "Email is required";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       newErrors.email = "Please enter a valid email";
     }
 
-    // Password validation
     if (!password) {
       newErrors.password = "Password is required";
     } else if (password.length < 6) {
@@ -61,8 +59,7 @@ export default function LoginScreen() {
     setLoading(true);
     try {
       await loginApi(email, password);
-      // Navigate to drawer on success
-      router.replace("/");
+      router.replace("/(drawer)");
     } catch (error) {
       const errorMessage =
         error instanceof Error

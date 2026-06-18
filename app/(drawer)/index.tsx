@@ -45,7 +45,7 @@ export default function Dashboard() {
       const headers = await getAuthHeaders();
 
       const response = await fetch(
-        "http://192.168.1.111:5000/api/v1/results/parent/dashboard",
+        "http://192.168.1.24:5000/api/v1/results/parent/dashboard",
         {
           method: "GET",
           headers,
@@ -212,8 +212,8 @@ export default function Dashboard() {
           ListEmptyComponent={
             <Text style={styles.emptyText}>
               لم يتم إضافة أطفال أو إجراء اختبارات بعد.
-{              t("noData")
-}            </Text>
+              {t("noData")}{" "}
+            </Text>
           }
         />
       </ScrollView>
