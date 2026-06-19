@@ -1,6 +1,8 @@
+import { useNotification } from "@/components/notification";
 import { Colors } from "@/constants/colors";
 import { kidService } from "@/services/kidService";
 import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
@@ -28,10 +30,12 @@ export default function ChildrenScreen() {
   const [name, setName] = useState("");
   const [age, setAge] = useState("");
   const [gender, setGender] = useState("male");
-const router = useRouter();
+  const router = useRouter();
   useEffect(() => {
     fetchKids();
   }, []);
+
+  const { showSuccess, showError, showInfo } = useNotification();
 
   const fetchKids = async () => {
     try {
@@ -40,26 +44,43 @@ const router = useRouter();
       setKids(res.data || []);
     } catch (error) {
       console.error(error);
-      Alert.alert("خطأ", "فشل في جلب البيانات");
+      const msg = error instanceof Error ? error.message : String(error);
+      const lower = msg.toLowerCase();
+      if (
+        lower.includes("token") ||
+        lower.includes("expired") ||
+        lower.includes("unauthorized") ||
+        lower.includes("invalid")
+      ) {
+        await AsyncStorage.removeItem("token");
+        await AsyncStorage.removeItem("user");
+        showError("جلسة منتهية — الرجاء إعادة تسجيل الدخول");
+        router.replace("/login");
+      } else {
+        showError(msg || "فشل في جلب البيانات من الخادم");
+      }
     } finally {
       setLoading(false);
     }
   };
 
   const handleSave = async () => {
-    if (!name || !age) return Alert.alert("تنبيه", "يرجى ملء جميع البيانات");
+    if (!name || !age) return showInfo("يرجى ملء جميع البيانات");
     try {
       const kidData = { name, age: Number(age), gender };
       if (isEditing && selectedId) {
         await kidService.updateKid(selectedId, kidData);
+        showSuccess("تم تحديث بيانات الطفل بنجاح");
       } else {
         await kidService.createKid(kidData);
+        showSuccess("تم إضافة الطفل بنجاح");
       }
       setModalVisible(false);
       resetForm();
       fetchKids();
     } catch (error) {
-      Alert.alert("خطأ", "حدث خطأ أثناء حفظ البيانات");
+      const msg = error instanceof Error ? error.message : String(error);
+      showError(msg || "حدث خطأ أثناء حفظ البيانات");
     }
   };
 
@@ -73,9 +94,11 @@ const router = useRouter();
         onPress: async () => {
           try {
             await kidService.deleteKid(id);
+            showSuccess("تم حذف الطفل بنجاح");
             fetchKids();
-          } catch {
-            Alert.alert("خطأ", "لم يتم الحذف");
+          } catch (error) {
+            const msg = error instanceof Error ? error.message : String(error);
+            showError(msg || "لم يتم الحذف");
           }
         },
       },
@@ -130,6 +153,17 @@ const router = useRouter();
       </View>
 
       <View style={styles.actionContainer}>
+        <TouchableOpacity
+          onPress={() =>
+            router.push({
+              pathname: "/chat",
+              params: { kidId: item._id },
+            })
+          }
+          style={[styles.iconCircle, { backgroundColor: "#E6FFFA" }]}
+        >
+          <Ionicons name="chatbubbles-outline" size={18} color="#059669" />
+        </TouchableOpacity>
         <TouchableOpacity
           onPress={() =>
             router.push({
