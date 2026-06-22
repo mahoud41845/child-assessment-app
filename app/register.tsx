@@ -42,32 +42,28 @@ export default function RegisterScreen() {
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
 
-    // Name validation
     if (!name.trim()) {
-      newErrors.name = "Full name is required";
+      newErrors.name = t("full_name_required");
     } else if (name.trim().length < 3) {
-      newErrors.name = "Name must be at least 3 characters";
+      newErrors.name = t("name_min_length");
     }
 
-    // Email validation
     if (!email.trim()) {
-      newErrors.email = "Email is required";
+      newErrors.email = t("email_required");
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      newErrors.email = "Please enter a valid email";
+      newErrors.email = t("invalid_email");
     }
 
-    // Password validation
     if (!password) {
-      newErrors.password = "Password is required";
+      newErrors.password = t("password_required");
     } else if (password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
+      newErrors.password = t("password_min_length");
     }
 
-    // Confirm password validation
     if (!confirmPassword) {
-      newErrors.confirmPassword = "Please confirm your password";
+      newErrors.confirmPassword = t("confirm_password_required");
     } else if (password !== confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match";
+      newErrors.confirmPassword = t("passwords_dont_match");
     }
 
     setErrors(newErrors);
@@ -80,14 +76,10 @@ export default function RegisterScreen() {
     setLoading(true);
     try {
       await registerApi(name, email, password);
-      // Navigate to drawer on success
-      router.replace("/");
+      router.replace("/(drawer)");
     } catch (error) {
-      const errorMessage =
-        error instanceof Error
-          ? error.message
-          : "Registration failed. Please try again.";
-      Alert.alert("Registration Failed", errorMessage);
+      const errorMessage = error instanceof Error ? error.message : t("error");
+      Alert.alert(t("error"), errorMessage);
       setErrors({ general: errorMessage });
     } finally {
       setLoading(false);
@@ -112,8 +104,8 @@ export default function RegisterScreen() {
           <View style={styles.logoContainer}>
             <Ionicons name="person-add" size={48} color={Colors.primary} />
           </View>
-          <Text style={styles.title}>Create Account</Text>
-          <Text style={styles.subtitle}>Join our assessment platform</Text>
+          <Text style={styles.title}>{t("create_account")}</Text>
+          <Text style={styles.subtitle}>{t("join_platform")}</Text>
         </View>
 
         {/* General Error */}
@@ -124,11 +116,10 @@ export default function RegisterScreen() {
           </View>
         )}
 
-        {/* Form */}
         <View style={styles.form}>
           {/* Name Input */}
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Full Name</Text>
+            <Text style={styles.label}>{t("full_name")}</Text>
             <View
               style={[
                 styles.inputContainer,
@@ -139,13 +130,11 @@ export default function RegisterScreen() {
                 name="person"
                 size={20}
                 color={errors.name ? Colors.error : Colors.textSecondary}
-                style={styles.inputIcon}
               />
               <TextInput
                 style={styles.input}
-                placeholder="John Doe"
+                placeholder={t("full_name")}
                 placeholderTextColor={Colors.textSecondary}
-                autoCapitalize="words"
                 value={name}
                 onChangeText={(text) => {
                   setName(text);
@@ -161,7 +150,7 @@ export default function RegisterScreen() {
 
           {/* Email Input */}
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Email Address</Text>
+            <Text style={styles.label}>{t("email_address")}</Text>
             <View
               style={[
                 styles.inputContainer,
@@ -172,12 +161,10 @@ export default function RegisterScreen() {
                 name="mail"
                 size={20}
                 color={errors.email ? Colors.error : Colors.textSecondary}
-                style={styles.inputIcon}
               />
               <TextInput
                 style={styles.input}
-                placeholder="your@email.com"
-                placeholderTextColor={Colors.textSecondary}
+                placeholder={t("email_address")}
                 keyboardType="email-address"
                 autoCapitalize="none"
                 value={email}
@@ -195,7 +182,7 @@ export default function RegisterScreen() {
 
           {/* Password Input */}
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Password</Text>
+            <Text style={styles.label}>{t("password")}</Text>
             <View
               style={[
                 styles.inputContainer,
@@ -206,12 +193,10 @@ export default function RegisterScreen() {
                 name="lock-closed"
                 size={20}
                 color={errors.password ? Colors.error : Colors.textSecondary}
-                style={styles.inputIcon}
               />
               <TextInput
                 style={styles.input}
-                placeholder="••••••••"
-                placeholderTextColor={Colors.textSecondary}
+                placeholder={t("password")}
                 secureTextEntry={!showPassword}
                 value={password}
                 onChangeText={(text) => {
@@ -221,10 +206,7 @@ export default function RegisterScreen() {
                 }}
                 editable={!loading}
               />
-              <TouchableOpacity
-                onPress={() => setShowPassword(!showPassword)}
-                disabled={loading}
-              >
+              <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
                 <Ionicons
                   name={showPassword ? "eye" : "eye-off"}
                   size={20}
@@ -232,14 +214,11 @@ export default function RegisterScreen() {
                 />
               </TouchableOpacity>
             </View>
-            {errors.password && (
-              <Text style={styles.errorMessage}>{errors.password}</Text>
-            )}
           </View>
 
-          {/* Confirm Password Input */}
+          {/* Confirm Password */}
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Confirm Password</Text>
+            <Text style={styles.label}>{t("confirmPassword")}</Text>
             <View
               style={[
                 styles.inputContainer,
@@ -252,12 +231,10 @@ export default function RegisterScreen() {
                 color={
                   errors.confirmPassword ? Colors.error : Colors.textSecondary
                 }
-                style={styles.inputIcon}
               />
               <TextInput
                 style={styles.input}
-                placeholder="••••••••"
-                placeholderTextColor={Colors.textSecondary}
+                placeholder={t("confirmPassword")}
                 secureTextEntry={!showConfirmPassword}
                 value={confirmPassword}
                 onChangeText={(text) => {
@@ -269,7 +246,6 @@ export default function RegisterScreen() {
               />
               <TouchableOpacity
                 onPress={() => setShowConfirmPassword(!showConfirmPassword)}
-                disabled={loading}
               >
                 <Ionicons
                   name={showConfirmPassword ? "eye" : "eye-off"}
@@ -283,12 +259,10 @@ export default function RegisterScreen() {
             )}
           </View>
 
-          {/* Password Requirements Info */}
+          {/* Info Box */}
           <View style={styles.infoBox}>
             <Ionicons name="information-circle" size={16} color={Colors.info} />
-            <Text style={styles.infoText}>
-              Password must be at least 6 characters long
-            </Text>
+            <Text style={styles.infoText}>{t("password_requirement")}</Text>
           </View>
 
           {/* Register Button */}
@@ -305,27 +279,27 @@ export default function RegisterScreen() {
             ) : (
               <>
                 <Ionicons name="checkmark-circle" size={20} color="#FFFFFF" />
-                <Text style={styles.registerButtonText}>Create Account</Text>
+                <Text style={styles.registerButtonText}>
+                  {t("create_account")}
+                </Text>
               </>
             )}
           </TouchableOpacity>
 
           {/* Login Link */}
           <View style={styles.loginContainer}>
-            <Text style={styles.loginText}>Already have an account? </Text>
+            <Text style={styles.loginText}>{t("already_have_account")}</Text>
             <Link href="/login" asChild>
-              <TouchableOpacity disabled={loading}>
-                <Text style={styles.loginLink}>Sign in</Text>
+              <TouchableOpacity>
+                <Text style={styles.loginLink}>{t("sign_in")}</Text>
               </TouchableOpacity>
             </Link>
           </View>
         </View>
 
-        {/* Terms Info */}
+        {/* Footer */}
         <View style={styles.footer}>
-          <Text style={styles.footerText}>
-            By creating an account, you agree to our Terms & Conditions
-          </Text>
+          <Text style={styles.footerText}>{t("terms_info")}</Text>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -347,7 +321,7 @@ const getStyles = (isRTL: boolean) =>
     header: {
       alignItems: "center",
       marginBottom: 40,
-      marginTop: 20,
+      marginTop: 80,  
     },
     logoContainer: {
       width: 80,
@@ -363,28 +337,31 @@ const getStyles = (isRTL: boolean) =>
       fontWeight: "700",
       color: Colors.textPrimary,
       marginBottom: 8,
+      textAlign: "center",
     },
     subtitle: {
       fontSize: 16,
       color: Colors.textSecondary,
+      textAlign: "center",
     },
     errorAlert: {
-      flexDirection: "row",
+      flexDirection: isRTL ? "row-reverse" : "row",
       alignItems: "center",
       backgroundColor: `${Colors.error}15`,
       borderRadius: 12,
       paddingVertical: 12,
       paddingHorizontal: 16,
       marginBottom: 24,
-      borderLeftWidth: 4,
-      borderLeftColor: Colors.error,
+      borderStartWidth: 4,
+      borderStartColor: Colors.error,
     },
     errorText: {
       color: Colors.error,
-      marginLeft: 12,
+      marginHorizontal: 12,
       fontSize: 14,
       fontWeight: "500",
       flex: 1,
+      textAlign: isRTL ? "right" : "left",
     },
     form: {
       gap: 20,
@@ -396,9 +373,10 @@ const getStyles = (isRTL: boolean) =>
       fontSize: 14,
       fontWeight: "600",
       color: Colors.textPrimary,
+      textAlign: isRTL ? "right" : "left",
     },
     inputContainer: {
-      flexDirection: "row",
+      flexDirection: isRTL ? "row-reverse" : "row",
       alignItems: "center",
       borderRadius: 12,
       borderWidth: 1,
@@ -412,21 +390,20 @@ const getStyles = (isRTL: boolean) =>
       borderColor: Colors.error,
       backgroundColor: `${Colors.error}08`,
     },
-    inputIcon: {
-      marginTop: 0,
-    },
     input: {
       flex: 1,
       fontSize: 16,
       color: Colors.textPrimary,
+      textAlign: isRTL ? "right" : "left",
     },
     errorMessage: {
       fontSize: 12,
       color: Colors.error,
       fontWeight: "500",
+      textAlign: isRTL ? "right" : "left",
     },
     infoBox: {
-      flexDirection: "row",
+      flexDirection: isRTL ? "row-reverse" : "row",
       alignItems: "center",
       backgroundColor: `${Colors.info}15`,
       paddingVertical: 12,
@@ -439,9 +416,10 @@ const getStyles = (isRTL: boolean) =>
       color: Colors.info,
       fontWeight: "500",
       flex: 1,
+      textAlign: isRTL ? "right" : "left",
     },
     registerButton: {
-      flexDirection: "row",
+      flexDirection: isRTL ? "row-reverse" : "row",
       backgroundColor: Colors.primary,
       height: 56,
       borderRadius: 12,
@@ -449,15 +427,10 @@ const getStyles = (isRTL: boolean) =>
       alignItems: "center",
       gap: 10,
       marginTop: 12,
-      shadowColor: Colors.primary,
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.3,
-      shadowRadius: 8,
       elevation: 5,
     },
     registerButtonDisabled: {
       backgroundColor: `${Colors.primary}80`,
-      shadowOpacity: 0.15,
     },
     registerButtonText: {
       color: "#FFFFFF",
@@ -465,7 +438,7 @@ const getStyles = (isRTL: boolean) =>
       fontWeight: "700",
     },
     loginContainer: {
-      flexDirection: "row",
+      flexDirection: isRTL ? "row-reverse" : "row",
       justifyContent: "center",
       alignItems: "center",
       marginTop: 16,

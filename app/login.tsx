@@ -38,15 +38,15 @@ export default function LoginScreen() {
     const newErrors: FormErrors = {};
 
     if (!email.trim()) {
-      newErrors.email = "Email is required";
+      newErrors.email = t("email_required"); // استخدم الترجمة هنا
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      newErrors.email = "Please enter a valid email";
+      newErrors.email = t("invalid_email");
     }
 
     if (!password) {
-      newErrors.password = "Password is required";
+      newErrors.password = t("password_required");
     } else if (password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
+      newErrors.password = t("password_min_length");
     }
 
     setErrors(newErrors);
@@ -62,10 +62,8 @@ export default function LoginScreen() {
       router.replace("/(drawer)");
     } catch (error) {
       const errorMessage =
-        error instanceof Error
-          ? error.message
-          : "Login failed. Please try again.";
-      Alert.alert("Login Failed", errorMessage);
+        error instanceof Error ? error.message : t("login_failed_msg");
+      Alert.alert(t("login_failed"), errorMessage);
       setErrors({ general: errorMessage });
     } finally {
       setLoading(false);
@@ -89,7 +87,7 @@ export default function LoginScreen() {
           <View style={styles.logoContainer}>
             <Ionicons name="book" size={48} color={Colors.primary} />
           </View>
-          <Text style={styles.title}>Child Assessment</Text>
+          <Text style={styles.title}>{t("app_title")}</Text>
           <Text style={styles.subtitle}>{t("login")}</Text>
         </View>
 
@@ -105,7 +103,7 @@ export default function LoginScreen() {
         <View style={styles.form}>
           {/* Email Input */}
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Email Address</Text>
+            <Text style={styles.label}>{t("email_address")}</Text>
             <View
               style={[
                 styles.inputContainer,
@@ -116,7 +114,6 @@ export default function LoginScreen() {
                 name="mail"
                 size={20}
                 color={errors.email ? Colors.error : Colors.textSecondary}
-                style={styles.inputIcon}
               />
               <TextInput
                 style={styles.input}
@@ -139,7 +136,7 @@ export default function LoginScreen() {
 
           {/* Password Input */}
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Password</Text>
+            <Text style={styles.label}>{t("password")}</Text>
             <View
               style={[
                 styles.inputContainer,
@@ -150,7 +147,6 @@ export default function LoginScreen() {
                 name="lock-closed"
                 size={20}
                 color={errors.password ? Colors.error : Colors.textSecondary}
-                style={styles.inputIcon}
               />
               <TextInput
                 style={styles.input}
@@ -181,14 +177,6 @@ export default function LoginScreen() {
             )}
           </View>
 
-          {/* Forgot Password Link */}
-          <TouchableOpacity
-            style={styles.forgotPasswordButton}
-            disabled={loading}
-          >
-            <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
-          </TouchableOpacity>
-
           {/* Login Button */}
           <TouchableOpacity
             style={[
@@ -202,7 +190,12 @@ export default function LoginScreen() {
               <ActivityIndicator color="#FFFFFF" size="small" />
             ) : (
               <>
-                <Ionicons name="log-in" size={20} color="#FFFFFF" />
+                <Ionicons
+                  name={isRTL ? "log-in-outline" : "log-in"}
+                  size={20}
+                  color="#FFFFFF"
+                  style={{ transform: [{ scaleX: isRTL ? -1 : 1 }] }}
+                />
                 <Text style={styles.loginButtonText}>{t("login")}</Text>
               </>
             )}
@@ -210,10 +203,10 @@ export default function LoginScreen() {
 
           {/* Register Link */}
           <View style={styles.registerContainer}>
-            <Text style={styles.registerText}>Don't have an account? </Text>
+            <Text style={styles.registerText}>{t("dont_have_account")}</Text>
             <Link href="/register" asChild>
               <TouchableOpacity disabled={loading}>
-                <Text style={styles.registerLink}>Sign up</Text>
+                <Text style={styles.registerLink}>{t("sign_up")}</Text>
               </TouchableOpacity>
             </Link>
           </View>
@@ -221,9 +214,7 @@ export default function LoginScreen() {
 
         {/* Footer Info */}
         <View style={styles.footer}>
-          <Text style={styles.footerText}>
-            🔒 Your data is secure and encrypted
-          </Text>
+          <Text style={styles.footerText}>{t("secure_data_info")}</Text>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -245,7 +236,7 @@ const getStyles = (isRTL: boolean) =>
     header: {
       alignItems: "center",
       marginBottom: 40,
-      marginTop: 20,
+      marginTop: 80,
     },
     logoContainer: {
       width: 80,
@@ -261,28 +252,31 @@ const getStyles = (isRTL: boolean) =>
       fontWeight: "700",
       color: Colors.textPrimary,
       marginBottom: 8,
+      textAlign: "center",
     },
     subtitle: {
       fontSize: 16,
       color: Colors.textSecondary,
+      textAlign: "center",
     },
     errorAlert: {
-      flexDirection: "row",
+      flexDirection: isRTL ? "row-reverse" : "row",
       alignItems: "center",
       backgroundColor: `${Colors.error}15`,
       borderRadius: 12,
       paddingVertical: 12,
       paddingHorizontal: 16,
       marginBottom: 24,
-      borderLeftWidth: 4,
-      borderLeftColor: Colors.error,
+      borderStartWidth: 4,
+      borderStartColor: Colors.error,
     },
     errorText: {
       color: Colors.error,
-      marginLeft: 12,
+      marginHorizontal: 12,
       fontSize: 14,
       fontWeight: "500",
       flex: 1,
+      textAlign: isRTL ? "right" : "left",
     },
     form: {
       gap: 24,
@@ -294,9 +288,10 @@ const getStyles = (isRTL: boolean) =>
       fontSize: 14,
       fontWeight: "600",
       color: Colors.textPrimary,
+      textAlign: isRTL ? "right" : "left",
     },
     inputContainer: {
-      flexDirection: "row",
+      flexDirection: isRTL ? "row-reverse" : "row",
       alignItems: "center",
       borderRadius: 12,
       borderWidth: 1,
@@ -310,29 +305,20 @@ const getStyles = (isRTL: boolean) =>
       borderColor: Colors.error,
       backgroundColor: `${Colors.error}08`,
     },
-    inputIcon: {
-      marginTop: 0,
-    },
     input: {
       flex: 1,
       fontSize: 16,
       color: Colors.textPrimary,
+      textAlign: isRTL ? "right" : "left",
     },
     errorMessage: {
       fontSize: 12,
       color: Colors.error,
       fontWeight: "500",
-    },
-    forgotPasswordButton: {
-      alignSelf: "flex-end",
-    },
-    forgotPasswordText: {
-      color: Colors.primary,
-      fontSize: 14,
-      fontWeight: "600",
+      textAlign: isRTL ? "right" : "left",
     },
     loginButton: {
-      flexDirection: "row",
+      flexDirection: isRTL ? "row-reverse" : "row",
       backgroundColor: Colors.primary,
       height: 56,
       borderRadius: 12,
@@ -340,15 +326,10 @@ const getStyles = (isRTL: boolean) =>
       alignItems: "center",
       gap: 10,
       marginTop: 12,
-      shadowColor: Colors.primary,
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.3,
-      shadowRadius: 8,
       elevation: 5,
     },
     loginButtonDisabled: {
       backgroundColor: `${Colors.primary}80`,
-      shadowOpacity: 0.15,
     },
     loginButtonText: {
       color: "#FFFFFF",
@@ -356,7 +337,7 @@ const getStyles = (isRTL: boolean) =>
       fontWeight: "700",
     },
     registerContainer: {
-      flexDirection: "row",
+      flexDirection: isRTL ? "row-reverse" : "row",
       justifyContent: "center",
       alignItems: "center",
       marginTop: 16,
@@ -378,5 +359,6 @@ const getStyles = (isRTL: boolean) =>
     footerText: {
       fontSize: 12,
       color: Colors.textSecondary,
+      textAlign: "center",
     },
   });

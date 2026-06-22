@@ -170,4 +170,309 @@ export const translations: Translations = {
     en: "Arabic Language",
     ar: "English Language",
   },
+
+  app_title: {
+    en: "Child Assessment",
+    ar: "تقييم الطفل",
+  },
+  email_address: {
+    en: "Email Address",
+    ar: "عنوان البريد الإلكتروني",
+  },
+  forgot_password: {
+    en: "Forgot Password?",
+    ar: "نسيت كلمة المرور؟",
+  },
+  dont_have_account: {
+    en: "Don't have an account? ",
+    ar: "ليس لديك حساب؟ ",
+  },
+  sign_up: {
+    en: "Sign up",
+    ar: "إنشاء حساب جديد",
+  },
+  secure_data_info: {
+    en: "🔒 Your data is secure and encrypted",
+    ar: "🔒 بياناتك آمنة ومشفرة",
+  },
+  email_required: {
+    en: "Email is required",
+    ar: "البريد الإلكتروني مطلوب",
+  },
+  invalid_email: {
+    en: "Please enter a valid email",
+    ar: "يرجى إدخال بريد إلكتروني صحيح",
+  },
+  password_required: {
+    en: "Password is required",
+    ar: "كلمة المرور مطلوبة",
+  },
+  password_min_length: {
+    en: "Password must be at least 6 characters",
+    ar: "يجب أن تكون كلمة المرور 6 أحرف على الأقل",
+  },
+  login_failed: {
+    en: "Login Failed",
+    ar: "فشل تسجيل الدخول",
+  },
+
+  create_account: {
+    en: "Create Account",
+    ar: "إنشاء حساب جديد",
+  },
+  join_platform: {
+    en: "Join our assessment platform",
+    ar: "انضم إلى منصة التقييم الخاصة بنا",
+  },
+  full_name: {
+    en: "Full Name",
+    ar: "الاسم الكامل",
+  },
+  full_name_required: {
+    en: "Full name is required",
+    ar: "الاسم بالكامل مطلوب",
+  },
+  name_min_length: {
+    en: "Name must be at least 3 characters",
+    ar: "الاسم يجب أن يكون 3 أحرف على الأقل",
+  },
+  confirm_password_required: {
+    en: "Please confirm your password",
+    ar: "يرجى تأكيد كلمة المرور",
+  },
+  passwords_dont_match: {
+    en: "Passwords do not match",
+    ar: "كلمات المرور غير متطابقة",
+  },
+  already_have_account: {
+    en: "Already have an account? ",
+    ar: "لديك حساب بالفعل؟ ",
+  },
+  sign_in: {
+    en: "Sign in",
+    ar: "تسجيل الدخول",
+  },
+  terms_info: {
+    en: "By creating an account, you agree to our Terms & Conditions",
+    ar: "بإنشائك للحساب، أنت توافق على الشروط والأحكام الخاصة بنا",
+  },
+  password_requirement: {
+    en: "Password must be at least 6 characters long",
+    ar: "يجب أن تتكون كلمة المرور من 6 أحرف على الأقل",
+  },
+
+  error_loading_questions: {
+    en: "Failed to load questions",
+    ar: "فشل في تحميل الأسئلة",
+  },
+  saving_results: {
+    en: "Saving results...",
+    ar: "جاري حفظ النتائج...",
+  },
+  save_success: {
+    en: "Success",
+    ar: "تم بنجاح",
+  },
+  save_success_msg: {
+    en: "Assessment results saved successfully",
+    ar: "تم حفظ نتائج التقييم بنجاح",
+  },
+  error_saving: {
+    en: "An error occurred while saving",
+    ar: "حدثت مشكلة أثناء الحفظ",
+  },
+  next: {
+    en: "Next",
+    ar: "التالي",
+  },
+  previous: {
+    en: "Previous",
+    ar: "السابق",
+  },
+  save_and_submit: {
+    en: "Save & Submit",
+    ar: "حفظ وإرسال",
+  },
+
+  categories_title: {
+    en: "Categories",
+    ar: "التصنيفات",
+  },
+  available_tests_title: {
+    en: "Available Tests",
+    ar: "الاختبارات المتاحة",
+  },
+  start_journey_desc: {
+    en: "Start the journey to explore your child's skills now",
+    ar: "ابدأ رحلة استكشاف مهارات طفلك الآن",
+  },
+  choose_section_desc: {
+    en: "Choose the appropriate section to start the assessment",
+    ar: "اختر القسم المناسب للبدء بالفحص",
+  },
+  diagnosis_welcome: {
+    en: "Welcome to the Diagnosis Section",
+    ar: "مرحباً بك في قسم التشخيص",
+  },
+  diagnosis_desc: {
+    en: "We provide a set of standardized tests to professionally monitor your child's growth.",
+    ar: "نقدم لك مجموعة من الاختبارات المقننة لمتابعة نمو طفلك بشكل احترافي.",
+  },
+  start_new_assessment: {
+    en: "Start New Assessment",
+    ar: "بدء فحص جديد",
+  },
+  explore: {
+    en: "Explore",
+    ar: "استكشاف",
+  },
+  assessment_test: {
+    en: "Assessment Test",
+    ar: "اختبار تقييمي",
+  },
+  fetch_error: {
+    en: "Error fetching data",
+    ar: "خطأ في جلب البيانات",
+  },
+  fetch_tests_error: {
+    en: "Error fetching tests",
+    ar: "خطأ في جلب الاختبارات",
+  },
+  good_morning: {
+    en: "Good Morning",
+    ar: "صباح الخير",
+  },
+  performance_summary: {
+    en: "Here is your children's performance summary today",
+    ar: "إليك ملخص أداء أطفالك اليوم",
+  },
+  total_children: {
+    en: "Total Children",
+    ar: "إجمالي الأطفال",
+  },
+  tests_completed: {
+    en: "Tests Completed",
+    ar: "اختبارات منجزة",
+  },
+  children_reports: {
+    en: "Children's Reports",
+    ar: "تقارير الأطفال",
+  },
+  tests_unit: {
+    en: "Tests",
+    ar: "اختبارات",
+  },
+  avg_performance: {
+    en: "Avg Performance",
+    ar: "متوسط الأداء",
+  },
+  highest_ratio: {
+    en: "Highest Ratio",
+    ar: "أعلى نسبة",
+  },
+  lowest_ratio: {
+    en: "Lowest Ratio",
+    ar: "أقل نسبة",
+  },
+  latest_level_label: {
+    en: "Latest Level",
+    ar: "آخر مستوى",
+  },
+  view_detailed_report: {
+    en: "View Detailed Report",
+    ar: "عرض التقرير المفصل",
+  },
+  no_kids_data: {
+    en: "No children added or tests conducted yet.",
+    ar: "لم يتم إضافة أطفال أو إجراء اختبارات بعد.",
+  },
+  // إضافة هذه المفاتيح في ملف الترجمة الخاص بك
+  sessionExpired: {
+    en: "Session expired — please login again",
+    ar: "جلسة منتهية — الرجاء إعادة تسجيل الدخول",
+  },
+  failedFetchKids: {
+    en: "Failed to fetch children data",
+    ar: "فشل في جلب بيانات الأطفال",
+  },
+  fillAllFields: { en: "Please fill all fields", ar: "يرجى ملء جميع البيانات" },
+  updateChildSuccess: {
+    en: "Child data updated successfully",
+    ar: "تم تحديث بيانات الطفل بنجاح",
+  },
+  addChildSuccess: {
+    en: "Child added successfully",
+    ar: "تم إضافة الطفل بنجاح",
+  },
+  deleteChild: { en: "Delete Child", ar: "حذف طفل" },
+  areYouSure: {
+    en: "Are you sure you want to delete this record?",
+    ar: "هل أنت متأكد من حذف هذا السجل؟",
+  },
+  deleteChildSuccess: {
+    en: "Child deleted successfully",
+    ar: "تم حذف الطفل بنجاح",
+  },
+  deleteError: { en: "Failed to delete child", ar: "فشل في حذف الطفل" },
+  years: { en: "years", ar: "سنوات" },
+  hello: { en: "Hello,", ar: "أهلاً بك،" },
+  childrenList: { en: "Your Children", ar: "قائمة أطفالك" },
+  totalChildrenAdded: { en: "Total children", ar: "إجمالي الأطفال المضافين" },
+  noChildrenAdded: {
+    en: "No children added yet",
+    ar: "لا يوجد أطفال مضافين بعد",
+  },
+  addFirstChild: { en: "Add your first child now", ar: "أضف أول طفل الآن" },
+  updateData: { en: "Update Data", ar: "تحديث البيانات" },
+  addNewChild: { en: "Add New Child", ar: "إضافة طفل جديد" },
+  fullName: { en: "Full Name", ar: "الاسم بالكامل" },
+  example: { en: "Example: John Doe", ar: "مثال: أحمد محمد" },
+  gender: { en: "Gender", ar: "الجنس" },
+  saveChanges: { en: "Save Changes", ar: "حفظ التعديلات" },
+  addChild: { en: "Add Child", ar: "إضافة الطفل" },
+
+  smart_assistant: {
+    en: "Smart Growth Assistant",
+    ar: "مساعد النمو الذكي",
+  },
+  online_now: {
+    en: "Online Now",
+    ar: "متصل الآن",
+  },
+  preparing_chat: {
+    en: "Preparing conversation...",
+    ar: "جاري تحضير المحادثة...",
+  },
+  start_chat_now: {
+    en: "Start conversation now",
+    ar: "ابدأ المحادثة الآن",
+  },
+  ask_me_anything: {
+    en: "Ask me anything about your child's growth",
+    ar: "اسألني أي شيء عن نمو طفلك وتطوره",
+  },
+  assistant_typing: {
+    en: "Assistant is thinking...",
+    ar: "المساعد يفكر...",
+  },
+  chat_placeholder: {
+    en: "Type your query here...",
+    ar: "اكتب استفسارك هنا...",
+  },
+  write_msg_first: {
+    en: "Write a message first",
+    ar: "اكتب رسالة أولاً",
+  },
+  kid_id_missing: {
+    en: "Kid ID is missing",
+    ar: "رقم الطفل غير موجود",
+  },
+  test_results: { en: "Test Results", ar: "نتائج الاختبار" },
+  go_to_dashboard: { en: "Back to Dashboard", ar: "العودة للرئيسية" },
+  score: { en: "Score", ar: "الدرجة" },
+  percentage: { en: "Percentage", ar: "النسبة المئوية" },
+  level: { en: "Classification", ar: "التصنيف" },
+  interpretation: { en: "Diagnosis Interpretation", ar: "التفسير والتشخيص" },
+  submitted_at: { en: "Date", ar: "التاريخ" },
+  test_summary: { en: "Test Summary", ar: "ملخص الاختبار" },
 };

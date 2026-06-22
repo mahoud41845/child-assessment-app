@@ -62,8 +62,7 @@ export const kidService = {
     return await response.json();
   },
 
-  // حذف طفل
-  deleteKid: async (id: string) => {
+   deleteKid: async (id: string) => {
     const headers = await getAuthHeaders();
     const response = await fetch(`${BASE_URL}/kids/${id}`, {
       method: "DELETE",
@@ -74,7 +73,6 @@ export const kidService = {
       const errorData = await response.json();
       throw new Error(errorData.message || "Failed to delete kid");
     }
-    // في الحذف أحياناً يكون الرد فارغاً أو رسالة نجاح
-    return await response.json();
+     return await response.json();
   },
 };

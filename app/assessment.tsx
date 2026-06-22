@@ -6,6 +6,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   Dimensions,
   ScrollView,
   StyleSheet,
@@ -28,7 +29,7 @@ const getCategoryTheme = (name: string) => {
 };
 
 export default function Assessment() {
-  const { isRTL, language } = useTranslation();
+  const { isRTL, language, t } = useTranslation(); // أضفنا t هنا
   const router = useRouter();
   const { kidId } = useLocalSearchParams();
 
@@ -48,7 +49,7 @@ export default function Assessment() {
       setCategories(data);
       setView("categories");
     } catch (error) {
-      alert("خطأ في جلب البيانات");
+      Alert.alert(t("error"), t("fetch_error"));
     } finally {
       setLoading(false);
     }
@@ -61,7 +62,7 @@ export default function Assessment() {
       setTests(data);
       setView("tests");
     } catch (error) {
-      alert("خطأ في جلب الاختبارات");
+      Alert.alert(t("error"), t("fetch_tests_error"));
     } finally {
       setLoading(false);
     }
@@ -95,16 +96,16 @@ export default function Assessment() {
           )}
           <Text style={styles.screenTitle}>
             {view === "dashboard"
-              ? "التقييمات"
+              ? t("assessments")
               : view === "categories"
-                ? "التصنيفات"
-                : "الاختبارات المتاحة"}
+                ? t("categories_title")
+                : t("available_tests_title")}
           </Text>
         </View>
         <Text style={styles.headerDesc}>
           {view === "dashboard"
-            ? "ابدأ رحلة استكشاف مهارات طفلك الآن"
-            : "اختر القسم المناسب للبدء بالفحص"}
+            ? t("start_journey_desc")
+            : t("choose_section_desc")}
         </Text>
       </View>
 
@@ -115,23 +116,22 @@ export default function Assessment() {
         {loading && (
           <View style={styles.loader}>
             <ActivityIndicator size="large" color={Colors.primary} />
-            <Text style={styles.loadingText}>جاري التحميل...</Text>
+            <Text style={styles.loadingText}>{t("loading")}</Text>
           </View>
         )}
 
         {!loading && view === "dashboard" && (
           <View style={styles.welcomeCard}>
             <View style={styles.welcomeInfo}>
-              <Text style={styles.welcomeTitle}>مرحباً بك في قسم التشخيص</Text>
-              <Text style={styles.welcomeText}>
-                نقدم لك مجموعة من الاختبارات المقننة لمتابعة نمو طفلك بشكل
-                احترافي.
-              </Text>
+              <Text style={styles.welcomeTitle}>{t("diagnosis_welcome")}</Text>
+              <Text style={styles.welcomeText}>{t("diagnosis_desc")}</Text>
               <TouchableOpacity
                 style={styles.mainStartBtn}
                 onPress={handleStartAssessment}
               >
-                <Text style={styles.mainStartBtnText}>بدأ فحص جديد</Text>
+                <Text style={styles.mainStartBtnText}>
+                  {t("start_new_assessment")}
+                </Text>
                 <Ionicons name="rocket" size={20} color="#FFF" />
               </TouchableOpacity>
             </View>
@@ -162,7 +162,7 @@ export default function Assessment() {
                     {language === "ar" ? item.name_ar : item.name_en}
                   </Text>
                   <View style={styles.catFooter}>
-                    <Text style={styles.catActionText}>استكشاف</Text>
+                    <Text style={styles.catActionText}>{t("explore")}</Text>
                     <Ionicons
                       name={isRTL ? "chevron-back" : "chevron-forward"}
                       size={14}
@@ -200,11 +200,15 @@ export default function Assessment() {
                     {language === "ar" ? item.name_ar : item.name_en}
                   </Text>
                   <Text style={styles.testType}>
-                    {item.type || "اختبار تقييمي"}
+                    {item.type || t("assessment_test")}
                   </Text>
                 </View>
                 <View style={styles.playBtn}>
-                  <Ionicons name="play" size={16} color="white" />
+                  <Ionicons
+                    name={isRTL ? "play-back" : "play"}
+                    size={16}
+                    color="white"
+                  />
                 </View>
               </TouchableOpacity>
             ))}
@@ -246,13 +250,13 @@ const getStyles = (isRTL: boolean) =>
       fontWeight: "900",
       color: "#1E293B",
       textAlign: isRTL ? "right" : "left",
+      flex: 1, // لضمان أخذ المساحة المتبقية
     },
     headerDesc: {
       fontSize: 14,
       color: "#64748B",
       textAlign: isRTL ? "right" : "left",
     },
-
     scrollContent: { padding: 20, paddingBottom: 50 },
     loader: { marginTop: 100, alignItems: "center" },
     loadingText: {
@@ -260,8 +264,6 @@ const getStyles = (isRTL: boolean) =>
       color: Colors.textSecondary,
       fontWeight: "600",
     },
-
-    // Dashboard View
     welcomeCard: {
       backgroundColor: Colors.primary,
       borderRadius: 25,
@@ -294,7 +296,7 @@ const getStyles = (isRTL: boolean) =>
       borderRadius: 15,
       flexDirection: isRTL ? "row-reverse" : "row",
       alignItems: "center",
-      alignSelf: isRTL ? "flex-start" : "flex-end",
+      alignSelf: isRTL ? "flex-start" : "flex-end", // الزر يظهر في الجهة المقابلة لبداية النص
       gap: 10,
     },
     mainStartBtnText: {
@@ -302,7 +304,6 @@ const getStyles = (isRTL: boolean) =>
       fontWeight: "800",
       fontSize: 16,
     },
-
     gridContainer: {
       flexDirection: isRTL ? "row-reverse" : "row",
       flexWrap: "wrap",
@@ -316,9 +317,6 @@ const getStyles = (isRTL: boolean) =>
       marginBottom: 20,
       alignItems: isRTL ? "flex-end" : "flex-start",
       elevation: 2,
-      shadowColor: "#000",
-      shadowOpacity: 0.05,
-      shadowRadius: 10,
     },
     catIconBox: {
       width: 60,
@@ -345,8 +343,6 @@ const getStyles = (isRTL: boolean) =>
       color: Colors.textSecondary,
       fontWeight: "600",
     },
-
-    // Tests View
     testList: { gap: 15 },
     testItem: {
       backgroundColor: "#FFF",

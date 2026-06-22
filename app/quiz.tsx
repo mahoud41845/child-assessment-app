@@ -16,19 +16,19 @@ import {
 } from "react-native";
 
 export default function QuizScreen() {
-  const { testId, testName, kidId } = useLocalSearchParams();
-  const { language } = useTranslation();
+  const { testId, kidId } = useLocalSearchParams();
+  const { t, language, isRTL } = useTranslation(); // أضفنا t و isRTL
   const router = useRouter();
 
   const [questions, setQuestions] = useState<any[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-
-  // تخزين الإجابات المختارة لكل سؤال
   const [selectedAnswers, setSelectedAnswers] = useState<{
     [key: number]: any;
   }>({});
+
+  const styles = getStyles(isRTL);
 
   useEffect(() => {
     loadData();
@@ -39,7 +39,7 @@ export default function QuizScreen() {
       const data = await apiService.getTestQuestions(testId as string);
       setQuestions(data || []);
     } catch {
-      Alert.alert("خطأ", "فشل في تحميل الأسئلة");
+      Alert.alert(t("error"), t("error_loading_questions"));
       router.back();
     } finally {
       setLoading(false);
@@ -54,7 +54,6 @@ export default function QuizScreen() {
   };
 
   const handleNext = () => {
-    // التحقق مرة أخرى للأمان
     if (selectedAnswers[currentIndex]) {
       setCurrentIndex(currentIndex + 1);
     }
@@ -77,13 +76,15 @@ export default function QuizScreen() {
         answers: Object.values(selectedAnswers),
       };
 
-      await apiService.submitTestResults(payload);
+      const res = await apiService.submitTestResults(payload);
 
-      Alert.alert("تم بنجاح", "تم حفظ نتائج التقييم بنجاح", [
-        { text: "حسناً", onPress: () => router.replace("/(drawer)/children") },
-      ]);
+      // Navigate to result page and show API response
+      router.replace({
+        pathname: "/quiz-result",
+        params: { result: JSON.stringify(res) },
+      });
     } catch (error) {
-      Alert.alert("خطأ", "حدثت مشكلة أثناء الحفظ");
+      Alert.alert(t("error"), t("error_saving"));
     } finally {
       setSubmitting(false);
     }
@@ -94,7 +95,7 @@ export default function QuizScreen() {
       <View style={styles.center}>
         <ActivityIndicator size="large" color={Colors.primary} />
         {submitting && (
-          <Text style={styles.loadingText}>جاري حفظ النتائج...</Text>
+          <Text style={styles.loadingText}>{t("saving_results")}</Text>
         )}
       </View>
     );
@@ -102,12 +103,11 @@ export default function QuizScreen() {
   const q = questions[currentIndex];
   const progress = (currentIndex + 1) / questions.length;
   const isLastQuestion = currentIndex === questions.length - 1;
-
-  // التحقق هل السؤال الحالي تمت الإجابة عليه أم لا
   const hasAnsweredCurrent = !!selectedAnswers[currentIndex];
 
   return (
     <View style={styles.container}>
+      {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.closeBtn}>
           <Ionicons name="close" size={24} color={Colors.textPrimary} />
@@ -162,36 +162,40 @@ export default function QuizScreen() {
         </View>
       </ScrollView>
 
-      {/* Footer Navigation Buttons */}
+      {/* Footer Navigation */}
       <View style={styles.footer}>
         {isLastQuestion ? (
           <TouchableOpacity
-            style={[styles.saveBtn, !hasAnsweredCurrent && styles.disabledBtn]} // تطبيق ستايل التعطيل
+            style={[styles.saveBtn, !hasAnsweredCurrent && styles.disabledBtn]}
             onPress={handleSave}
-            disabled={!hasAnsweredCurrent} // تعطيل الضغط
+            disabled={!hasAnsweredCurrent}
           >
             <Ionicons name="checkmark-done" size={20} color="white" />
-            <Text style={styles.saveBtnText}>حفظ وإرسال</Text>
+            <Text style={styles.saveBtnText}>{t("save_and_submit")}</Text>
           </TouchableOpacity>
         ) : (
           <TouchableOpacity
-            style={[styles.nextBtn, !hasAnsweredCurrent && styles.disabledBtn]} // تطبيق ستايل التعطيل
+            style={[styles.nextBtn, !hasAnsweredCurrent && styles.disabledBtn]}
             onPress={handleNext}
-            disabled={!hasAnsweredCurrent} // تعطيل الضغط
+            disabled={!hasAnsweredCurrent}
           >
-            <Text style={styles.nextBtnText}>التالي</Text>
-            <Ionicons name="chevron-back" size={20} color="white" />
+            <Text style={styles.nextBtnText}>{t("next")}</Text>
+            <Ionicons
+              name={isRTL ? "chevron-back" : "chevron-forward"}
+              size={20}
+              color="white"
+            />
           </TouchableOpacity>
         )}
 
         {currentIndex > 0 && (
           <TouchableOpacity style={styles.prevBtn} onPress={handlePrevious}>
             <Ionicons
-              name="chevron-forward"
+              name={isRTL ? "chevron-forward" : "chevron-back"}
               size={20}
               color={Colors.textSecondary}
             />
-            <Text style={styles.prevBtnText}>السابق</Text>
+            <Text style={styles.prevBtnText}>{t("previous")}</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -199,156 +203,154 @@ export default function QuizScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#F8FAFC" },
-  center: { flex: 1, justifyContent: "center", alignItems: "center" },
-  loadingText: { marginTop: 15, fontWeight: "bold", color: Colors.primary },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 20,
-    marginTop: 50,
-    marginBottom: 20,
-  },
-  closeBtn: { padding: 5 },
-  progressContainer: {
-    flex: 1,
-    height: 8,
-    backgroundColor: "#E2E8F0",
-    borderRadius: 4,
-    marginHorizontal: 15,
-    overflow: "hidden",
-  },
-  progressFill: { height: "100%", backgroundColor: Colors.primary },
-  progressText: {
-    fontSize: 13,
-    fontWeight: "800",
-    color: Colors.textSecondary,
-  },
-
-  content: { padding: 25, paddingBottom: 150 },
-  tag: {
-    alignSelf: "flex-start",
-    backgroundColor: Colors.primaryLight,
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 8,
-    marginBottom: 15,
-  },
-  qType: { color: Colors.primary, fontWeight: "bold", fontSize: 12 },
-  qText: {
-    fontSize: 22,
-    fontWeight: "800",
-    color: Colors.textPrimary,
-    marginBottom: 35,
-    textAlign: "right",
-    lineHeight: 32,
-  },
-
-  optionsContainer: { gap: 12 },
-  ansBtn: {
-    backgroundColor: "#FFF",
-    padding: 20,
-    borderRadius: 18,
-    flexDirection: "row-reverse",
-    justifyContent: "space-between",
-    alignItems: "center",
-    borderWidth: 1.5,
-    borderColor: "#EDF2F7",
-  },
-  ansBtnSelected: { borderColor: Colors.primary, backgroundColor: "#F0F7FF" },
-  ansText: {
-    fontSize: 16,
-    color: Colors.textPrimary,
-    flex: 1,
-    textAlign: "right",
-    fontWeight: "500",
-  },
-  ansTextSelected: { color: Colors.primary, fontWeight: "700" },
-  radio: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
-    borderWidth: 2,
-    borderColor: "#CBD5E0",
-    marginLeft: 15,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  radioSelected: { borderColor: Colors.primary },
-  radioInner: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: Colors.primary,
-  },
-
-  // Footer & Buttons
-  footer: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: "white",
-    padding: 20,
-    paddingBottom: Platform.OS === "ios" ? 40 : 20,
-    flexDirection: "row-reverse",
-    justifyContent: "space-between",
-    borderTopWidth: 1,
-    borderTopColor: "#EDF2F7",
-  },
-  nextBtn: {
-    backgroundColor: Colors.primary,
-    paddingHorizontal: 30,
-    height: 54,
-    borderRadius: 15,
-    flexDirection: "row-reverse",
-    alignItems: "center",
-    flex: 0.6,
-    justifyContent: "center",
-  },
-  nextBtnText: {
-    color: "white",
-    fontSize: 18,
-    fontWeight: "bold",
-    marginHorizontal: 8,
-  },
-  saveBtn: {
-    backgroundColor: Colors.success,
-    paddingHorizontal: 30,
-    height: 54,
-    borderRadius: 15,
-    flexDirection: "row-reverse",
-    alignItems: "center",
-    flex: 0.6,
-    justifyContent: "center",
-  },
-  saveBtnText: {
-    color: "white",
-    fontSize: 18,
-    fontWeight: "bold",
-    marginHorizontal: 8,
-  },
-  prevBtn: {
-    backgroundColor: "#F1F5F9",
-    paddingHorizontal: 20,
-    height: 54,
-    borderRadius: 15,
-    flexDirection: "row-reverse",
-    alignItems: "center",
-    flex: 0.35,
-    justifyContent: "center",
-  },
-  prevBtnText: {
-    color: Colors.textSecondary,
-    fontSize: 16,
-    fontWeight: "600",
-    marginHorizontal: 5,
-  },
-
-  // ستايل الزر المعطل
-  disabledBtn: {
-    backgroundColor: "#CBD5E0", // لون رمادي باهت
-    opacity: 0.6,
-  },
-});
+const getStyles = (isRTL: boolean) =>
+  StyleSheet.create({
+    container: { flex: 1, backgroundColor: "#F8FAFC" },
+    center: { flex: 1, justifyContent: "center", alignItems: "center" },
+    loadingText: { marginTop: 15, fontWeight: "bold", color: Colors.primary },
+    header: {
+      flexDirection: isRTL ? "row-reverse" : "row",
+      alignItems: "center",
+      paddingHorizontal: 20,
+      marginTop: 50,
+      marginBottom: 20,
+    },
+    closeBtn: { padding: 5 },
+    progressContainer: {
+      flex: 1,
+      height: 8,
+      backgroundColor: "#E2E8F0",
+      borderRadius: 4,
+      marginHorizontal: 15,
+      overflow: "hidden",
+    },
+    progressFill: {
+      height: "100%",
+      backgroundColor: Colors.primary,
+    },
+    progressText: {
+      fontSize: 13,
+      fontWeight: "800",
+      color: Colors.textSecondary,
+    },
+    content: { padding: 25, paddingBottom: 150 },
+    tag: {
+      alignSelf: isRTL ? "flex-end" : "flex-start",
+      backgroundColor: Colors.primaryLight,
+      paddingHorizontal: 12,
+      paddingVertical: 4,
+      borderRadius: 8,
+      marginBottom: 15,
+    },
+    qType: { color: Colors.primary, fontWeight: "bold", fontSize: 12 },
+    qText: {
+      fontSize: 22,
+      fontWeight: "800",
+      color: Colors.textPrimary,
+      marginBottom: 35,
+      textAlign: isRTL ? "right" : "left",
+      lineHeight: 32,
+    },
+    optionsContainer: { gap: 12 },
+    ansBtn: {
+      backgroundColor: "#FFF",
+      padding: 20,
+      borderRadius: 18,
+      flexDirection: isRTL ? "row-reverse" : "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      borderWidth: 1.5,
+      borderColor: "#EDF2F7",
+    },
+    ansBtnSelected: { borderColor: Colors.primary, backgroundColor: "#F0F7FF" },
+    ansText: {
+      fontSize: 16,
+      color: Colors.textPrimary,
+      flex: 1,
+      textAlign: isRTL ? "right" : "left",
+      fontWeight: "500",
+    },
+    ansTextSelected: { color: Colors.primary, fontWeight: "700" },
+    radio: {
+      width: 22,
+      height: 22,
+      borderRadius: 11,
+      borderWidth: 2,
+      borderColor: "#CBD5E0",
+      marginHorizontal: 10,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    radioSelected: { borderColor: Colors.primary },
+    radioInner: {
+      width: 10,
+      height: 10,
+      borderRadius: 5,
+      backgroundColor: Colors.primary,
+    },
+    footer: {
+      position: "absolute",
+      bottom: 0,
+      left: 0,
+      right: 0,
+      backgroundColor: "white",
+      padding: 20,
+      paddingBottom: Platform.OS === "ios" ? 40 : 20,
+      flexDirection: isRTL ? "row-reverse" : "row",
+      justifyContent: "space-between",
+      borderTopWidth: 1,
+      borderTopColor: "#EDF2F7",
+    },
+    nextBtn: {
+      backgroundColor: Colors.primary,
+      paddingHorizontal: 20,
+      height: 54,
+      borderRadius: 15,
+      flexDirection: isRTL ? "row-reverse" : "row",
+      alignItems: "center",
+      flex: 0.6,
+      justifyContent: "center",
+    },
+    nextBtnText: {
+      color: "white",
+      fontSize: 18,
+      fontWeight: "bold",
+      marginHorizontal: 8,
+    },
+    saveBtn: {
+      backgroundColor: Colors.success,
+      paddingHorizontal: 20,
+      height: 54,
+      borderRadius: 15,
+      flexDirection: isRTL ? "row-reverse" : "row",
+      alignItems: "center",
+      flex: 0.6,
+      justifyContent: "center",
+    },
+    saveBtnText: {
+      color: "white",
+      fontSize: 18,
+      fontWeight: "bold",
+      marginHorizontal: 8,
+    },
+    prevBtn: {
+      backgroundColor: "#F1F5F9",
+      paddingHorizontal: 15,
+      height: 54,
+      borderRadius: 15,
+      flexDirection: isRTL ? "row-reverse" : "row",
+      alignItems: "center",
+      flex: 0.35,
+      justifyContent: "center",
+    },
+    prevBtnText: {
+      color: Colors.textSecondary,
+      fontSize: 16,
+      fontWeight: "600",
+      marginHorizontal: 5,
+    },
+    disabledBtn: {
+      backgroundColor: "#CBD5E0",
+      opacity: 0.6,
+    },
+  });

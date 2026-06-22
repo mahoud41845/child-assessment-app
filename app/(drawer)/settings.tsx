@@ -113,18 +113,18 @@ export default function Settings() {
             onPress={handleLanguageChange}
           />
           <View style={styles.separator} />
-          <SettingItem
+          {/* <SettingItem
             icon="notifications-outline"
             label={t("notifications")}
             description={t("notification_desc")}
             value={notificationsEnabled}
             onValueChange={setNotificationsEnabled}
             type="toggle"
-          />
+          /> */}
         </View>
       </View>
 
-      <View style={styles.section}>
+      {/* <View style={styles.section}>
         <Text style={styles.sectionHeader}>{t("privacy")}</Text>
         <View style={styles.card}>
           <SettingItem
@@ -143,17 +143,12 @@ export default function Settings() {
             onPress={() => {}}
           />
         </View>
-      </View>
+      </View> */}
 
       <View style={styles.section}>
         <Text style={styles.sectionHeader}>{t("about")}</Text>
         <View style={styles.card}>
-          <SettingItem
-            icon="help-circle-outline"
-            label={t("help_center")}
-            type="link"
-            onPress={() => {}}
-          />
+         
           <View style={styles.separator} />
           <SettingItem
             icon="information-circle-outline"
