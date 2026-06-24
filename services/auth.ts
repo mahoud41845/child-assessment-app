@@ -1,20 +1,22 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+export interface User {
+  name: string;
+  email: string;
+  role: string;
+}
+
 export interface AuthResponse {
   status: string;
   token: string;
-  user: {
-    name: string;
-    email: string;
-    role: string;
-  };
+  user: User;
 }
 
 export interface ApiError {
   message: string;
 }
 
-const API_BASE_URL = "http://192.168.1.24:5000/api/v1/auth";
+const API_BASE_URL = "http://192.168.1.64:5000/api/v1/auth";
 
 export const loginApi = async (
   email: string,
@@ -85,5 +87,15 @@ export const registerApi = async (
       throw new Error(error.message || "Network error occurred");
     }
     throw new Error("An unexpected error occurred");
+  }
+};
+
+export const getStoredUser = async (): Promise<User | null> => {
+  try {
+    const userString = await AsyncStorage.getItem("user");
+    return userString ? (JSON.parse(userString) as User) : null;
+  } catch (error) {
+    console.error("Failed to load stored user:", error);
+    return null;
   }
 };

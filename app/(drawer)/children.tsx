@@ -1,6 +1,7 @@
 import { useNotification } from "@/components/notification";
 import { Colors } from "@/constants/colors";
 import { useTranslation } from "@/context/TranslationProvider";
+import { getStoredUser } from "@/services/auth";
 import { kidService } from "@/services/kidService";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -45,7 +46,16 @@ export default function ChildrenScreen() {
   const styles = getStyles(isRTL);
 
   useEffect(() => {
-    fetchKids();
+    const checkRoleAndFetch = async () => {
+      const user = await getStoredUser();
+      if (user?.role === "admin") {
+        router.replace("/admin-dashboard" as any);
+        return;
+      }
+      fetchKids();
+    };
+
+    checkRoleAndFetch();
   }, []);
 
   const fetchKids = async () => {
@@ -512,7 +522,6 @@ const getStyles = (isRTL: boolean) =>
     },
     emptyLink: { color: Colors.primary, fontWeight: "bold", marginTop: 10 },
   });
-
 
 //   import { useNotification } from "@/components/notification";
 //   import { Colors } from "@/constants/colors";

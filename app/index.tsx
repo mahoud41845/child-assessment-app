@@ -1,3 +1,4 @@
+import { getStoredUser } from "@/services/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import { useEffect } from "react";
@@ -10,8 +11,13 @@ export default function Index() {
     const checkAuth = async () => {
       try {
         const token = await AsyncStorage.getItem("token");
-        if (token) {
-          router.replace("/(drawer)");
+        const user = await getStoredUser();
+        if (token && user) {
+          if (user.role === "admin") {
+            router.replace("/admin-dashboard");
+          } else {
+            router.replace("/(drawer)");
+          }
         } else {
           router.replace("/login");
         }

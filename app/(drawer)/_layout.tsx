@@ -154,23 +154,49 @@ import {
 import "react-native-reanimated";
 
 import { useTranslation } from "@/context/TranslationProvider";
+import { getStoredUser } from "@/services/auth";
 
 // مكون مخصص لمحتوى القائمة الجانبية (هذا سيحل كل مشاكل التصميم والتعليق)
 function CustomDrawerContent(props: any) {
   const { t, isRTL } = useTranslation();
   const router = useRouter();
   const pathname = usePathname(); // لمعرفة الصفحة الحالية وتلوينها
+  const { userRole } = props;
 
   const handleLogout = async () => {
     await AsyncStorage.removeItem("token");
+    await AsyncStorage.removeItem("user");
     router.replace("/login");
   };
 
-  const menuItems = [
-    { label: t("dashboard"), icon: "home-outline", route: "/" },
-    { label: t("children"), icon: "people-outline", route: "/children" },
-    { label: t("settings"), icon: "settings-outline", route: "/settings" },
-  ];
+  const menuItems =
+    userRole === "admin"
+      ? [
+          {
+            label: t("admin_dashboard"),
+            icon: "speedometer-outline",
+            route: "/admin-dashboard",
+          },
+          {
+            label: t("admin_users"),
+            icon: "people-outline",
+            route: "/admin-users",
+          },
+          {
+            label: t("settings"),
+            icon: "settings-outline",
+            route: "/settings",
+          },
+        ]
+      : [
+          { label: t("dashboard"), icon: "home-outline", route: "/" },
+          { label: t("children"), icon: "people-outline", route: "/children" },
+          {
+            label: t("settings"),
+            icon: "settings-outline",
+            route: "/settings",
+          },
+        ];
 
   return (
     <DrawerContentScrollView {...props}>
@@ -236,18 +262,23 @@ export default function DrawerLayout() {
   const { t, isRTL } = useTranslation();
   const router = useRouter();
   const [checkingAuth, setCheckingAuth] = useState(true);
+  const [userRole, setUserRole] = useState<string | null>(null);
 
   useEffect(() => {
     const checkAuth = async () => {
       const token = await AsyncStorage.getItem("token");
-      if (!token) {
+      const user = await getStoredUser();
+
+      if (!token || !user) {
         router.replace("/login");
-      } else {
-        setCheckingAuth(false);
+        return;
       }
+
+      setUserRole(user.role);
+      setCheckingAuth(false);
     };
     checkAuth();
-  }, []);
+  }, [router]);
 
   if (checkingAuth) {
     return (
@@ -259,7 +290,9 @@ export default function DrawerLayout() {
 
   return (
     <Drawer
-      drawerContent={(props) => <CustomDrawerContent {...props} />}
+      drawerContent={(props) => (
+        <CustomDrawerContent {...props} userRole={userRole} />
+      )}
       screenOptions={{
         headerShown: true,
         drawerPosition: isRTL ? "right" : "left",
@@ -269,8 +302,23 @@ export default function DrawerLayout() {
       }}
     >
       {/* تعريف الشاشات هنا (بدون خيارات التصميم لأننا صممناها في CustomDrawerContent) */}
-      <Drawer.Screen name="index" options={{ title: t("dashboard") }} />
-      <Drawer.Screen name="children" options={{ title: t("children") }} />
+      {userRole === "admin" ? (
+        <>
+          <Drawer.Screen
+            name="admin-dashboard"
+            options={{ title: t("admin_dashboard") }}
+          />
+          <Drawer.Screen
+            name="admin-users"
+            options={{ title: t("admin_users") }}
+          />
+        </>
+      ) : (
+        <>
+          <Drawer.Screen name="index" options={{ title: t("dashboard") }} />
+          <Drawer.Screen name="children" options={{ title: t("children") }} />
+        </>
+      )}
       <Drawer.Screen name="settings" options={{ title: t("settings") }} />
       <Drawer.Screen
         name="logout"

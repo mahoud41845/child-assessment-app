@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const BASE_URL = "http://192.168.1.24:5000/api/v1";
+const BASE_URL = "http://192.168.1.64:5000/api/v1";
 
 export interface Kid {
   _id?: string;
@@ -62,7 +62,7 @@ export const kidService = {
     return await response.json();
   },
 
-   deleteKid: async (id: string) => {
+  deleteKid: async (id: string) => {
     const headers = await getAuthHeaders();
     const response = await fetch(`${BASE_URL}/kids/${id}`, {
       method: "DELETE",
@@ -73,6 +73,6 @@ export const kidService = {
       const errorData = await response.json();
       throw new Error(errorData.message || "Failed to delete kid");
     }
-     return await response.json();
+    return await response.json();
   },
 };

@@ -59,7 +59,7 @@ export default function LoginScreen() {
     setLoading(true);
     try {
       await loginApi(email, password);
-      router.replace("/(drawer)");
+      router.replace("/");
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : t("login_failed_msg");

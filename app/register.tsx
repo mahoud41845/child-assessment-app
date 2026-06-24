@@ -76,7 +76,7 @@ export default function RegisterScreen() {
     setLoading(true);
     try {
       await registerApi(name, email, password);
-      router.replace("/(drawer)");
+      router.replace("/");
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : t("error");
       Alert.alert(t("error"), errorMessage);
@@ -321,7 +321,7 @@ const getStyles = (isRTL: boolean) =>
     header: {
       alignItems: "center",
       marginBottom: 40,
-      marginTop: 80,  
+      marginTop: 80,
     },
     logoContainer: {
       width: 80,

@@ -43,7 +43,7 @@ export default function Dashboard() {
       setLoading(true);
       const headers = await getAuthHeaders();
       const response = await fetch(
-        "http://192.168.1.24:5000/api/v1/results/parent/dashboard",
+        "http://192.168.1.64:5000/api/v1/results/parent/dashboard",
         {
           method: "GET",
           headers,
