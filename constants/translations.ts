@@ -382,6 +382,18 @@ export const translations: Translations = {
     en: "View Detailed Report",
     ar: "عرض التقرير المفصل",
   },
+  detailed_results_for: {
+    en: "Detailed results for",
+    ar: "النتائج التفصيلية لـ",
+  },
+  missingKidId: {
+    en: "Missing child identifier.",
+    ar: "معرّف الطفل مفقود.",
+  },
+  date: {
+    en: "Date",
+    ar: "التاريخ",
+  },
   no_kids_data: {
     en: "No children added or tests conducted yet.",
     ar: "لم يتم إضافة أطفال أو إجراء اختبارات بعد.",
@@ -444,6 +456,27 @@ export const translations: Translations = {
     en: "View all registered users on the platform.",
     ar: "عرض جميع المستخدمين المسجلين على المنصة.",
   },
+  admin_users_title: {
+    en: "Platform Users",
+    ar: "مستخدمي المنصة",
+  },
+  welcome_admin: {
+    en: "Welcome admin",
+    ar: "مرحبا",
+  },
+
+  delete_user: {
+    en: "Delete User",
+    ar: "حذف المستخدم",
+  },
+  delete_user_confirm: {
+    en: "Are you sure you want to delete",
+    ar: "هل أنت متأكد أنك تريد حذف",
+  },
+  delete_user_success: {
+    en: "User deleted successfully.",
+    ar: "تم حذف المستخدم بنجاح.",
+  },
   admin_no_users: {
     en: "No users found.",
     ar: "لم يتم العثور على مستخدمين.",
@@ -500,4 +533,54 @@ export const translations: Translations = {
   interpretation: { en: "Diagnosis Interpretation", ar: "التفسير والتشخيص" },
   submitted_at: { en: "Date", ar: "التاريخ" },
   test_summary: { en: "Test Summary", ar: "ملخص الاختبار" },
+
+  based_on_results: {
+    en: "Based on all test results",
+    ar: "بناءً على جميع نتائج الفحص",
+  },
+
+  cases_analysis: {
+    en: "Severity Cases Analysis",
+    ar: "تحليل الحالات والخطورة",
+  },
+
+  system_status: {
+    en: "System Status",
+    ar: "حالة النظام",
+  },
+
+  role_user: {
+    en: "User",
+    ar: "مستخدم",
+  },
+
+  joined_at: {
+    en: "Joined",
+    ar: "انضم في",
+  },
+
+  admin_results_title: {
+    en: "Assessment Results",
+    ar: "نتائج التقييم",
+  },
+
+  no_results_found: {
+    en: "No results found for this child",
+    ar: "لا توجد نتائج لهذا الطفل حالياً",
+  },
+
+  total_score: {
+    en: "Total Score",
+    ar: "إجمالي الدرجات",
+  },
+
+  recommendations: {
+    en: "Expert Recommendations",
+    ar: "توصيات الخبراء",
+  },
+
+  error_loading_result: {
+    en: "Error loading result data",
+    ar: "خطأ في تحميل بيانات النتيجة",
+  },
 };

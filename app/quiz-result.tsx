@@ -19,23 +19,22 @@ export default function QuizResult() {
   const { result } = useLocalSearchParams();
   const router = useRouter();
 
-  const styles = getStyles(isRTL);
-
-  let data: any = null;
+  // تحويل النتيجة من String إلى Object
+  let rawData: any = null;
   try {
-    data = result ? JSON.parse(result as string) : null;
+    rawData = result ? JSON.parse(result as string) : null;
   } catch (e) {
-    data = null;
+    rawData = null;
   }
 
-  // إذا كانت البيانات موجودة داخل كائن data (حسب استجابة الـ API الخاص بك)
-  const finalData = data?.data || data;
+  // الوصول للبيانات الفعلية (التعامل مع nested data إن وُجدت)
+  const finalData = rawData?.data || rawData;
 
   if (!finalData) {
     return (
       <View style={styles.center}>
-        <Ionicons name="alert-circle" size={64} color={Colors.error} />
-        <Text style={styles.errorText}>{t("error")}</Text>
+        <Ionicons name="alert-circle" size={64} color="#ef4444" />
+        <Text style={styles.errorText}>{t("error_loading_result")}</Text>
         <TouchableOpacity
           onPress={() => router.replace("/(drawer)")}
           style={styles.errorButton}
@@ -52,213 +51,237 @@ export default function QuizResult() {
     percentage,
     level,
     interpretation,
+    recommendations,
     submittedAt,
   } = finalData;
 
-  // تحديد لون الحالة بناءً على النسبة
+  // تحديد اللون بناءً على المستوى
   const getStatusColor = () => {
-    if (percentage >= 80) return Colors.success;
-    if (percentage >= 50) return "#F59E0B"; // Amber/Warning
-    return Colors.error;
+    const l = level.toLowerCase();
+    if (l.includes("low") || l.includes("منخفض")) return "#10b981"; // أخضر
+    if (l.includes("medium") || l.includes("متوسط")) return "#f59e0b"; // برتقالي
+    return "#ef4444"; // أحمر للمرتفع
   };
 
   const statusColor = getStatusColor();
+  const currentLang = isRTL ? "ar" : "en";
 
   return (
     <ScrollView
       style={styles.container}
       contentContainerStyle={styles.scrollContent}
+      showsVerticalScrollIndicator={false}
     >
-      {/* Header Section */}
+      {/* 1. Header Card (The Score) */}
       <View style={styles.headerCard}>
-        <View style={[styles.percentageCircle, { borderColor: statusColor }]}>
-          <Text style={[styles.percentageText, { color: statusColor }]}>
-            {percentage}%
-          </Text>
-          <Text style={styles.percentageSubText}>{t("percentage")}</Text>
+        <View
+          style={[styles.percentageCircle, { borderColor: statusColor + "30" }]}
+        >
+          <View style={[styles.innerCircle, { borderColor: statusColor }]}>
+            <Text style={[styles.percentageText, { color: statusColor }]}>
+              {isRTL ? `%${percentage}` : `${percentage}%`}
+            </Text>
+            <Text style={styles.percentageSubText}>{t("percentage")}</Text>
+          </View>
         </View>
-        <Text style={styles.levelTitle}>{level}</Text>
-        <View style={styles.dateRow}>
-          <Ionicons
-            name="calendar-outline"
-            size={14}
-            color={Colors.textSecondary}
-          />
-          <Text style={styles.dateText}>
-            {new Date(submittedAt).toLocaleDateString(
-              isRTL ? "ar-EG" : "en-US",
-              {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              },
-            )}
-          </Text>
-        </View>
+        <Text style={[styles.levelTitle, { color: statusColor }]}>{level}</Text>
+        <Text style={styles.dateText}>
+          {new Date(submittedAt).toLocaleDateString(isRTL ? "ar-EG" : "en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          })}
+        </Text>
       </View>
 
-      {/* Summary Stats Grid */}
-      <View style={styles.statsGrid}>
-        <View style={styles.statBox}>
-          <Ionicons name="stats-chart" size={20} color={Colors.primary} />
-          <Text style={styles.statLabel}>{t("score")}</Text>
-          <Text style={styles.statValue}>
+      {/* 2. Stats Summary */}
+      <View
+        style={[
+          styles.statsRow,
+          { flexDirection: isRTL ? "row-reverse" : "row" },
+        ]}
+      >
+        <View style={styles.miniStat}>
+          <Text style={styles.miniStatLabel}>{t("total_score")}</Text>
+          <Text style={styles.miniStatValue}>
             {totalScore} / {maxScore}
           </Text>
         </View>
-        <View style={styles.statBox}>
-          <Ionicons name="ribbon" size={20} color={Colors.primary} />
-          <Text style={styles.statLabel}>{t("level")}</Text>
-          <Text style={styles.statValue} numberOfLines={1}>
+        <View style={styles.miniStat}>
+          <Text style={styles.miniStatLabel}>{t("latest_level_label")}</Text>
+          <Text style={[styles.miniStatValue, { color: statusColor }]}>
             {level}
           </Text>
         </View>
       </View>
 
-      {/* Interpretation Section */}
+      {/* 3. Interpretation Card */}
       <View style={styles.infoCard}>
-        <View style={styles.cardHeader}>
-          <Ionicons name="document-text" size={22} color={Colors.primary} />
+        <View
+          style={[
+            styles.cardHeader,
+            { flexDirection: isRTL ? "row-reverse" : "row" },
+          ]}
+        >
+          <Ionicons name="bulb-outline" size={22} color={Colors.primary} />
           <Text style={styles.cardTitle}>{t("interpretation")}</Text>
         </View>
-        <Text style={styles.interpretationText}>{interpretation}</Text>
+        <Text
+          style={[styles.cardDesc, { textAlign: isRTL ? "right" : "left" }]}
+        >
+          {interpretation[currentLang]}
+        </Text>
       </View>
 
-      {/* Action Buttons */}
+      {/* 4. Recommendations Section (Hidden if level is Low) */}
+      {level.toLowerCase() !== "low" &&
+        recommendations &&
+        recommendations.length > 0 && (
+          <View style={styles.infoCard}>
+            <View
+              style={[
+                styles.cardHeader,
+                { flexDirection: isRTL ? "row-reverse" : "row" },
+              ]}
+            >
+              <Ionicons name="list-outline" size={22} color={Colors.primary} />
+              <Text style={styles.cardTitle}>{t("recommendations")}</Text>
+            </View>
+
+            {recommendations.map((rec: any, index: number) => (
+              <View
+                key={index}
+                style={[
+                  styles.recItem,
+                  { flexDirection: isRTL ? "row-reverse" : "row" },
+                ]}
+              >
+                <View
+                  style={[styles.recDot, { backgroundColor: statusColor }]}
+                />
+                <Text
+                  style={[
+                    styles.recText,
+                    { textAlign: isRTL ? "right" : "left" },
+                  ]}
+                >
+                  {rec[currentLang]}
+                </Text>
+              </View>
+            ))}
+          </View>
+        )}
+
+      {/* 5. Home Button */}
       <TouchableOpacity
-        style={styles.mainButton}
+        style={styles.homeBtn}
         onPress={() => router.replace("/(drawer)")}
       >
         <Ionicons name="home" size={20} color="white" />
-        <Text style={styles.mainButtonText}>{t("go_to_dashboard")}</Text>
+        <Text style={styles.homeBtnText}>{t("go_to_dashboard")}</Text>
       </TouchableOpacity>
     </ScrollView>
   );
 }
 
-const getStyles = (isRTL: boolean) =>
-  StyleSheet.create({
-    container: { flex: 1, backgroundColor: "#F1F5F9" },
-    scrollContent: { padding: 20, paddingTop: 60, alignItems: "center" },
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: "#F8FAFC" },
+  scrollContent: { padding: 20, paddingTop: 60, paddingBottom: 40 },
+  headerCard: {
+    backgroundColor: "white",
+    borderRadius: 35,
+    padding: 30,
+    alignItems: "center",
+    marginBottom: 20,
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowRadius: 15,
+    elevation: 3,
+  },
+  percentageCircle: {
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    borderWidth: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  innerCircle: {
+    width: 125,
+    height: 125,
+    borderRadius: 65,
+    borderWidth: 2,
+    borderStyle: "dashed",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  percentageText: { fontSize: 36, fontWeight: "900" },
+  percentageSubText: {
+    fontSize: 12,
+    color: "#94a3b8",
+    fontWeight: "bold",
+    textTransform: "uppercase",
+  },
+  levelTitle: { fontSize: 24, fontWeight: "900", marginBottom: 5 },
+  dateText: { fontSize: 13, color: "#94a3b8" },
 
-    headerCard: {
-      width: "100%",
-      backgroundColor: "#FFF",
-      borderRadius: 30,
-      padding: 30,
-      alignItems: "center",
-      marginBottom: 20,
-      elevation: 4,
-      shadowColor: "#000",
-      shadowOpacity: 0.1,
-      shadowRadius: 10,
-    },
-    percentageCircle: {
-      width: 120,
-      height: 120,
-      borderRadius: 60,
-      borderWidth: 8,
-      justifyContent: "center",
-      alignItems: "center",
-      marginBottom: 15,
-    },
-    percentageText: { fontSize: 28, fontWeight: "900" },
-    percentageSubText: {
-      fontSize: 12,
-      color: Colors.textSecondary,
-      fontWeight: "600",
-    },
-    levelTitle: {
-      fontSize: 22,
-      fontWeight: "800",
-      color: Colors.textPrimary,
-      marginBottom: 8,
-    },
-    dateRow: {
-      flexDirection: isRTL ? "row-reverse" : "row",
-      alignItems: "center",
-      gap: 6,
-    },
-    dateText: { fontSize: 13, color: Colors.textSecondary },
+  statsRow: { gap: 15, marginBottom: 20 },
+  miniStat: {
+    flex: 1,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 15,
+    alignItems: "center",
+    elevation: 1,
+  },
+  miniStatLabel: {
+    fontSize: 11,
+    color: "#64748b",
+    marginBottom: 4,
+    fontWeight: "600",
+  },
+  miniStatValue: { fontSize: 16, fontWeight: "bold", color: "#1e293b" },
 
-    statsGrid: {
-      flexDirection: isRTL ? "row-reverse" : "row",
-      justifyContent: "space-between",
-      width: "100%",
-      marginBottom: 20,
-    },
-    statBox: {
-      width: (width - 55) / 2,
-      backgroundColor: "#FFF",
-      borderRadius: 20,
-      padding: 20,
-      alignItems: isRTL ? "flex-end" : "flex-start",
-      elevation: 2,
-    },
-    statLabel: {
-      fontSize: 12,
-      color: Colors.textSecondary,
-      marginTop: 10,
-      fontWeight: "600",
-    },
-    statValue: {
-      fontSize: 18,
-      fontWeight: "800",
-      color: Colors.textPrimary,
-      marginTop: 4,
-    },
+  infoCard: {
+    backgroundColor: "white",
+    borderRadius: 25,
+    padding: 20,
+    marginBottom: 15,
+    elevation: 1,
+  },
+  cardHeader: { alignItems: "center", gap: 10, marginBottom: 12 },
+  cardTitle: { fontSize: 18, fontWeight: "bold", color: "#1e293b" },
+  cardDesc: { fontSize: 15, color: "#475569", lineHeight: 24 },
 
-    infoCard: {
-      width: "100%",
-      backgroundColor: "#FFF",
-      borderRadius: 25,
-      padding: 25,
-      marginBottom: 30,
-      elevation: 2,
-    },
-    cardHeader: {
-      flexDirection: isRTL ? "row-reverse" : "row",
-      alignItems: "center",
-      marginBottom: 15,
-      gap: 10,
-    },
-    cardTitle: { fontSize: 18, fontWeight: "800", color: Colors.textPrimary },
-    interpretationText: {
-      fontSize: 15,
-      color: "#475569",
-      lineHeight: 24,
-      textAlign: isRTL ? "right" : "left",
-    },
+  recItem: { gap: 12, marginBottom: 15, alignItems: "flex-start" },
+  recDot: { width: 8, height: 8, borderRadius: 4, marginTop: 8 },
+  recText: { flex: 1, fontSize: 14, color: "#475569", lineHeight: 22 },
 
-    mainButton: {
-      width: "100%",
-      backgroundColor: Colors.primary,
-      height: 56,
-      borderRadius: 18,
-      flexDirection: isRTL ? "row-reverse" : "row",
-      justifyContent: "center",
-      alignItems: "center",
-      gap: 10,
-      elevation: 4,
-    },
-    mainButtonText: { color: "white", fontWeight: "800", fontSize: 16 },
+  homeBtn: {
+    backgroundColor: Colors.primary,
+    height: 60,
+    borderRadius: 20,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 10,
+    marginTop: 10,
+  },
+  homeBtnText: { color: "white", fontWeight: "bold", fontSize: 16 },
 
-    center: {
-      flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
-      padding: 20,
-    },
-    errorText: {
-      fontSize: 18,
-      color: Colors.textSecondary,
-      marginVertical: 15,
-    },
-    errorButton: {
-      backgroundColor: Colors.primary,
-      paddingHorizontal: 30,
-      paddingVertical: 12,
-      borderRadius: 12,
-    },
-    buttonText: { color: "white", fontWeight: "bold" },
-  });
+  center: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  errorText: { fontSize: 16, color: "#64748b", marginVertical: 20 },
+  errorButton: {
+    backgroundColor: Colors.primary,
+    paddingHorizontal: 25,
+    paddingVertical: 12,
+    borderRadius: 15,
+  },
+  buttonText: { color: "white", fontWeight: "bold" },
+});

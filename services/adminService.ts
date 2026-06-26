@@ -41,4 +41,19 @@ export const adminService = {
 
     return json;
   },
+
+  deleteUser: async (userId: string) => {
+    const headers = await getAuthHeaders();
+    const response = await fetch(`${BASE_URL}/admin/users/${userId}`, {
+      method: "DELETE",
+      headers,
+    });
+
+    const json = await response.json();
+    if (!response.ok) {
+      throw new Error(json.message || "Failed to delete user");
+    }
+
+    return json;
+  },
 };

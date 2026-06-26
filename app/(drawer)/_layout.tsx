@@ -156,11 +156,10 @@ import "react-native-reanimated";
 import { useTranslation } from "@/context/TranslationProvider";
 import { getStoredUser } from "@/services/auth";
 
-// مكون مخصص لمحتوى القائمة الجانبية (هذا سيحل كل مشاكل التصميم والتعليق)
-function CustomDrawerContent(props: any) {
+ function CustomDrawerContent(props: any) {
   const { t, isRTL } = useTranslation();
   const router = useRouter();
-  const pathname = usePathname(); // لمعرفة الصفحة الحالية وتلوينها
+  const pathname = usePathname();  
   const { userRole } = props;
 
   const handleLogout = async () => {
@@ -234,8 +233,7 @@ function CustomDrawerContent(props: any) {
           );
         })}
 
-        {/* زر تسجيل الخروج المنفصل لضمان عدم التعليق */}
-        <TouchableOpacity
+         <TouchableOpacity
           onPress={handleLogout}
           style={[
             styles.drawerItem,
@@ -301,8 +299,7 @@ export default function DrawerLayout() {
         headerTitleAlign: "center",
       }}
     >
-      {/* تعريف الشاشات هنا (بدون خيارات التصميم لأننا صممناها في CustomDrawerContent) */}
-      {userRole === "admin" ? (
+       {userRole === "admin" ? (
         <>
           <Drawer.Screen
             name="admin-dashboard"

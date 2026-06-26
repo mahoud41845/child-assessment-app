@@ -2,6 +2,7 @@ import { Colors } from "@/constants/colors";
 import { useTranslation } from "@/context/TranslationProvider";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -18,13 +19,14 @@ import {
 const { width } = Dimensions.get("window");
 
 export default function Dashboard() {
-  const { isRTL, t } = useTranslation(); // استخدام t و isRTL
+  const { isRTL, t } = useTranslation();
+  const router = useRouter();
 
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
-  const styles = getStyles(isRTL); // تمرير isRTL للاستايل
+  const styles = getStyles(isRTL);
 
   const getAuthHeaders = async () => {
     const token = await AsyncStorage.getItem("token");
@@ -67,9 +69,9 @@ export default function Dashboard() {
   const getLevelColor = (level: string | null) => {
     if (!level) return "#94A3B8";
     const l = level.toLowerCase();
-    if (l.includes("طبيعي") || l.includes("normal")) return Colors.success;
+    if (l.includes("طبيعي") || l.includes("normal")) return Colors.danger;
     if (l.includes("متوسط") || l.includes("moderate")) return Colors.warning;
-    return Colors.danger;
+    return Colors.success;
   };
 
   if (loading && !refreshing) {
@@ -153,7 +155,15 @@ export default function Dashboard() {
         </View>
       </View>
 
-      <TouchableOpacity style={styles.detailsBtn}>
+      <TouchableOpacity
+        style={styles.detailsBtn}
+        onPress={() =>
+          router.push({
+            pathname: "/results",
+            params: { kidId: item.kidId, kidName: item.name },
+          })
+        }
+      >
         <Text style={styles.detailsBtnText}>{t("view_detailed_report")}</Text>
         <Ionicons
           name={isRTL ? "arrow-back" : "arrow-forward"}
