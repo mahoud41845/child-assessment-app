@@ -9,7 +9,6 @@ import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
   FlatList,
   KeyboardAvoidingView,
   Modal,
@@ -35,6 +34,8 @@ export default function ChildrenScreen() {
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [name, setName] = useState("");
@@ -92,6 +93,12 @@ export default function ChildrenScreen() {
     setSelectedId(null);
   };
 
+  const resetDeleteModal = () => {
+    setDeleteError("");
+    setDeleteModalVisible(false);
+    setSelectedId(null);
+  };
+
   const handleSave = async () => {
     if (!name || !age) return showInfo(t("fillAllFields"));
     try {
@@ -114,24 +121,25 @@ export default function ChildrenScreen() {
 
   const handleDelete = (id: string) => {
     if (!id) return;
-    Alert.alert(t("deleteChild"), t("areYouSure"), [
-      { text: t("cancel"), style: "cancel" },
-      {
-        text: t("delete"),
-        style: "destructive",
-        onPress: async () => {
-          try {
-            await kidService.deleteKid(id);
-            setKids((prevKids) => prevKids.filter((kid) => kid._id !== id));
-            showSuccess(t("deleteChildSuccess"));
-            fetchKids();
-          } catch (error) {
-            const msg = error instanceof Error ? error.message : String(error);
-            showError(msg || t("deleteError"));
-          }
-        },
-      },
-    ]);
+    setSelectedId(id);
+    setDeleteError("");
+    setDeleteModalVisible(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!selectedId) return;
+
+    try {
+      await kidService.deleteKid(selectedId);
+      setKids((prevKids) => prevKids.filter((kid) => kid._id !== selectedId));
+      showSuccess(t("deleteChildSuccess"));
+      resetDeleteModal();
+      fetchKids();
+    } catch (error) {
+      const msg = error instanceof Error ? error.message : String(error);
+      setDeleteError(msg || t("deleteError"));
+      showError(msg || t("deleteError"));
+    }
   };
 
   const openEditModal = (kid: Kid) => {
@@ -361,6 +369,48 @@ export default function ChildrenScreen() {
           </KeyboardAvoidingView>
         </View>
       </Modal>
+
+      <Modal visible={deleteModalVisible} animationType="fade" transparent>
+        <View style={styles.modalOverlay}>
+          <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            style={styles.modalContent}
+          >
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>{t("deleteChild")}</Text>
+              <TouchableOpacity onPress={resetDeleteModal}>
+                <Ionicons name="close" size={24} color={Colors.textSecondary} />
+              </TouchableOpacity>
+            </View>
+
+            <Text style={styles.deleteMessage}>{t("areYouSure")}</Text>
+
+            {deleteError ? (
+              <View style={styles.errorBox}>
+                <Text style={styles.errorText}>{deleteError}</Text>
+              </View>
+            ) : null}
+
+            <View style={styles.deleteActionsRow}>
+              <TouchableOpacity
+                style={styles.cancelButton}
+                onPress={resetDeleteModal}
+              >
+                <Text style={styles.cancelButtonText}>{t("cancel")}</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.deleteConfirmButton}
+                onPress={confirmDelete}
+              >
+                <Text style={styles.deleteConfirmButtonText}>
+                  {t("delete")}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </KeyboardAvoidingView>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -463,6 +513,52 @@ const getStyles = (isRTL: boolean) =>
       marginBottom: 25,
     },
     modalTitle: { fontSize: 22, fontWeight: "800", color: Colors.textPrimary },
+    deleteMessage: {
+      fontSize: 15,
+      color: Colors.textSecondary,
+      marginBottom: 16,
+      lineHeight: 22,
+      textAlign: isRTL ? "right" : "left",
+    },
+    deleteActionsRow: {
+      flexDirection: isRTL ? "row-reverse" : "row",
+      justifyContent: "space-between",
+      gap: 12,
+      marginTop: 8,
+    },
+    cancelButton: {
+      flex: 1,
+      borderRadius: 14,
+      paddingVertical: 14,
+      alignItems: "center",
+      backgroundColor: "#F1F5F9",
+    },
+    cancelButtonText: {
+      color: Colors.textPrimary,
+      fontWeight: "700",
+    },
+    deleteConfirmButton: {
+      flex: 1,
+      borderRadius: 14,
+      paddingVertical: 14,
+      alignItems: "center",
+      backgroundColor: Colors.danger,
+    },
+    deleteConfirmButtonText: {
+      color: "white",
+      fontWeight: "700",
+    },
+    errorBox: {
+      backgroundColor: "#FEE2E2",
+      padding: 12,
+      borderRadius: 12,
+      marginBottom: 12,
+    },
+    errorText: {
+      color: Colors.danger,
+      fontSize: 13,
+      fontWeight: "600",
+    },
     inputGroup: { marginBottom: 20 },
     inputLabel: {
       fontSize: 14,

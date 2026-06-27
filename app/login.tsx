@@ -38,7 +38,7 @@ export default function LoginScreen() {
     const newErrors: FormErrors = {};
 
     if (!email.trim()) {
-      newErrors.email = t("email_required"); // استخدم الترجمة هنا
+      newErrors.email = t("email_required");  
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       newErrors.email = t("invalid_email");
     }
